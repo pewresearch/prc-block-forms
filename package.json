@@ -1,0 +1,28 @@
+{
+	"name": "@prc/block-forms",
+	"version": "1.1.0",
+	"description": "Forms management for the PRC Platform: Forms CPT, response logging, REST handlers, form blocks, and the Synced Form block.",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"build": "wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js",
+		"build:responses-admin": "wp-scripts build --config webpack.responses-admin.config.js",
+		"build:responses-panel": "wp-scripts build --config webpack.form-responses-panel.config.js",
+		"build:synced-form": "wp-scripts build --webpack-copy-php",
+		"start": "wp-scripts start --experimental-modules --webpack-copy-php",
+		"start:responses-admin": "wp-scripts start --config webpack.responses-admin.config.js",
+		"start:responses-panel": "wp-scripts start --config webpack.form-responses-panel.config.js"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.13.3",
+		"@emotion/styled": "^11.13.0",
+		"@prc/components": "*",
+		"@prc/controls": "*",
+		"@prc/hooks": "*",
+		"@prc/icons": "*",
+		"@wordpress/dataviews": "^4.19.0",
+		"@wordpress/icons": "^10.23.0"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^31.4.0"
+	}
+}

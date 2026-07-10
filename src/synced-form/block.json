@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "prc-block/synced-form",
+	"title": "Synced Form",
+	"category": "forms",
+	"description": "Create, save, and sync forms to reuse across the site. Update the form, and the changes apply everywhere it's used. Responses are collected centrally under Forms → Responses.",
+	"keywords": ["form", "synced", "reusable", "embed"],
+	"textdomain": "synced-form",
+	"attributes": {
+		"ref": {
+			"type": "number"
+		}
+	},
+	"supports": {
+		"customClassName": false,
+		"html": false,
+		"align": true,
+		"interactivity": true
+	},
+	"providesContext": {
+		"prc-block/form/formPostId": "ref"
+	},
+	"editorScript": "file:./index.js"
+}

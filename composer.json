@@ -1,0 +1,14 @@
+{
+	"name": "pewresearch/prc-block-forms",
+	"description": "PRC Block Forms — Forms CPT, response logging, and submission handlers",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=8.2"
+	},
+	"config": {
+		"platform": {
+			"php": "8.4.0"
+		}
+	}
+}

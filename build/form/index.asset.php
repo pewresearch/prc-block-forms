@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('emotion-styled', 'prc-components', 'prc-icons', 'react-jsx-runtime', 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-compose', 'wp-data', 'wp-dom-ready', 'wp-element', 'wp-hooks', 'wp-html-entities', 'wp-i18n'), 'version' => 'c840e56fc44646691f40');
