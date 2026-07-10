@@ -227,6 +227,19 @@ class Form {
 			}
 		}
 
+		// Bake an HMAC over forwardTo so inline (non-synced) submissions cannot
+		// swap the recipient. Synced forms resolve forwardTo from the form CPT
+		// on submit and ignore the client value; the sig is still harmless there.
+		if ( 'sendToEmail' === $form_action ) {
+			$forward_to = isset( $action_config['forwardTo'] ) ? sanitize_email( (string) $action_config['forwardTo'] ) : '';
+			if ( filter_var( $forward_to, FILTER_VALIDATE_EMAIL ) ) {
+				$action_config['forwardTo']    = $forward_to;
+				$action_config['forwardToSig'] = Form_Send_Email::sign_forward_to( $forward_to );
+			} else {
+				unset( $action_config['forwardToSig'] );
+			}
+		}
+
 		$tag = new \WP_HTML_Tag_Processor( $content );
 		$tag->next_tag( 'form' );
 

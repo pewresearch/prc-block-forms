@@ -518,14 +518,9 @@ class Form_Send_Email {
 		$form_id   = sanitize_text_field( $form_data['formId'] ?? '' );
 		$form_name = sanitize_text_field( $form_data['formName'] ?? '' );
 
-		$action_config = $form_data['actionConfig'] ?? array();
-		if ( ! is_array( $action_config ) ) {
-			$action_config = array();
-		}
-
-		$target = isset( $action_config['forwardTo'] ) ? sanitize_email( (string) $action_config['forwardTo'] ) : '';
-		if ( ! filter_var( $target, FILTER_VALIDATE_EMAIL ) ) {
-			return new \WP_Error( 'missing_forward_to', 'No forward-to recipient configured for this form.', array( 'status' => 400 ) );
+		$target = self::resolve_forward_to( $form_data );
+		if ( is_wp_error( $target ) ) {
+			return $target;
 		}
 
 		$form_fields = $form_data['formFields'] ?? array();
@@ -579,8 +574,9 @@ class Form_Send_Email {
 			return $throttled;
 		}
 
+		// Do not set From — let DEFAULT_EMAIL_ADDRESS / wp_mail_from apply.
+		// Reply-To carries the submitter so editors can respond.
 		$headers   = array( 'Content-Type: text/html; charset=UTF-8' );
-		$headers[] = 'From: ' . sanitize_email( $email_address );
 		$headers[] = 'Reply-To: ' . sanitize_email( $email_address );
 
 		$sent = \wp_mail( $target, $subject, $message, $headers ); //phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
@@ -613,6 +609,172 @@ class Form_Send_Email {
 		} else {
 			return new \WP_Error( 'form_submission_failed', 'Form submission failed to send', array( 'status' => 500 ) );
 		}
+	}
+
+	/**
+	 * Sign a forward-to recipient for inline (non-synced) forms.
+	 *
+	 * Baked into actionConfig at render time; verified on submit so the client
+	 * cannot swap the recipient without knowing wp_salt( 'auth' ).
+	 *
+	 * @param string $email Recipient email address.
+	 * @return string HMAC-SHA256 hex digest.
+	 */
+	public static function sign_forward_to( string $email ): string {
+		return hash_hmac( 'sha256', strtolower( sanitize_email( $email ) ), wp_salt( 'auth' ) );
+	}
+
+	/**
+	 * Verify a forward-to signature.
+	 *
+	 * @param string $email Recipient email address.
+	 * @param string $sig   Client-supplied HMAC hex digest.
+	 * @return bool
+	 */
+	public static function verify_forward_to_signature( string $email, string $sig ): bool {
+		if ( '' === $email || '' === $sig ) {
+			return false;
+		}
+		$expected = self::sign_forward_to( $email );
+		return hash_equals( $expected, $sig );
+	}
+
+	/**
+	 * Extract the configured forwardTo from a form CPT post.
+	 *
+	 * Walks parsed blocks recursively looking for prc-block/form with
+	 * action sendToEmail. Supports legacy redirectUrl-as-email.
+	 *
+	 * Status rules match Form_Renderer::render_by_id(): publish always;
+	 * draft/future/private when the viewer is logged in or in preview.
+	 *
+	 * @param int $form_post_id Form CPT post ID.
+	 * @return string Sanitized email or empty string when not resolvable.
+	 */
+	public static function extract_forward_to_from_form_post( int $form_post_id ): string {
+		if ( $form_post_id <= 0 ) {
+			return '';
+		}
+
+		$form_post = get_post( $form_post_id );
+		if ( ! $form_post instanceof \WP_Post ) {
+			return '';
+		}
+
+		$expected_type = class_exists( Forms::class ) ? Forms::POST_TYPE : 'form';
+		if ( $expected_type !== $form_post->post_type ) {
+			return '';
+		}
+
+		$allowed_statuses = array( 'publish' );
+		if ( is_user_logged_in() || is_preview() ) {
+			$allowed_statuses[] = 'draft';
+			$allowed_statuses[] = 'future';
+			$allowed_statuses[] = 'private';
+		}
+
+		if ( ! in_array( $form_post->post_status, $allowed_statuses, true ) ) {
+			return '';
+		}
+
+		$blocks = parse_blocks( (string) $form_post->post_content );
+		return self::find_forward_to_in_blocks( $blocks );
+	}
+
+	/**
+	 * Recursively find sendToEmail forwardTo in parsed blocks.
+	 *
+	 * @param array $blocks Parsed blocks from parse_blocks().
+	 * @return string Sanitized email or empty string.
+	 */
+	private static function find_forward_to_in_blocks( array $blocks ): string {
+		foreach ( $blocks as $block ) {
+			if ( ! is_array( $block ) ) {
+				continue;
+			}
+
+			$name       = $block['blockName'] ?? '';
+			$attrs      = is_array( $block['attrs'] ?? null ) ? $block['attrs'] : array();
+			$inner      = is_array( $block['innerBlocks'] ?? null ) ? $block['innerBlocks'] : array();
+			$action     = $attrs['action'] ?? '';
+			$config     = is_array( $attrs['actionConfig'] ?? null ) ? $attrs['actionConfig'] : array();
+			$forward_to = '';
+
+			if ( 'prc-block/form' === $name && 'sendToEmail' === $action ) {
+				$forward_to = isset( $config['forwardTo'] ) ? sanitize_email( (string) $config['forwardTo'] ) : '';
+				if ( '' === $forward_to ) {
+					$legacy = isset( $attrs['redirectUrl'] ) ? sanitize_email( (string) $attrs['redirectUrl'] ) : '';
+					if ( filter_var( $legacy, FILTER_VALIDATE_EMAIL ) ) {
+						$forward_to = $legacy;
+					}
+				}
+				if ( filter_var( $forward_to, FILTER_VALIDATE_EMAIL ) ) {
+					return $forward_to;
+				}
+			}
+
+			if ( ! empty( $inner ) ) {
+				$nested = self::find_forward_to_in_blocks( $inner );
+				if ( '' !== $nested ) {
+					return $nested;
+				}
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolve the authoritative sendToEmail recipient.
+	 *
+	 * Synced forms (formPostId > 0): read forwardTo from the form CPT
+	 * (same status rules as Form_Renderer::render_by_id).
+	 * Inline forms: require a valid render-time HMAC on actionConfig.forwardToSig.
+	 * Never trusts unsigned client forwardTo alone.
+	 *
+	 * @param array $form_data Decoded submission body.
+	 * @return string|\WP_Error Validated recipient email or error.
+	 */
+	public static function resolve_forward_to( array $form_data ) {
+		$form_post_id = absint( $form_data['formPostId'] ?? 0 );
+
+		if ( $form_post_id > 0 ) {
+			$target = self::extract_forward_to_from_form_post( $form_post_id );
+			if ( ! filter_var( $target, FILTER_VALIDATE_EMAIL ) ) {
+				return new \WP_Error(
+					'missing_forward_to',
+					'No forward-to recipient configured for this form.',
+					array( 'status' => 400 )
+				);
+			}
+			return $target;
+		}
+
+		$action_config = $form_data['actionConfig'] ?? array();
+		if ( ! is_array( $action_config ) ) {
+			$action_config = array();
+		}
+
+		$claimed = isset( $action_config['forwardTo'] ) ? sanitize_email( (string) $action_config['forwardTo'] ) : '';
+		$sig     = isset( $action_config['forwardToSig'] ) ? (string) $action_config['forwardToSig'] : '';
+
+		if ( ! filter_var( $claimed, FILTER_VALIDATE_EMAIL ) ) {
+			return new \WP_Error(
+				'missing_forward_to',
+				'No forward-to recipient configured for this form.',
+				array( 'status' => 400 )
+			);
+		}
+
+		if ( ! self::verify_forward_to_signature( $claimed, $sig ) ) {
+			return new \WP_Error(
+				'invalid_forward_to_signature',
+				'Forward-to recipient signature is invalid.',
+				array( 'status' => 403 )
+			);
+		}
+
+		return $claimed;
 	}
 
 	/**
