@@ -31,7 +31,7 @@ function viewToQueryArgs(view, isSpam) {
 
 	if (view.filters?.length) {
 		view.filters.forEach((filter) => {
-			if (!filter.value) {
+			if (!filter.value && filter.value !== 0 && filter.value !== false) {
 				return;
 			}
 			if (filter.field === 'form') {
@@ -52,6 +52,15 @@ function viewToQueryArgs(view, isSpam) {
 					args.status = joined;
 				}
 			}
+			if (filter.field === 'isUnread') {
+				args.is_unread =
+					filter.value === true ||
+					filter.value === 'true' ||
+					filter.value === 1 ||
+					filter.value === '1'
+						? 1
+						: 0;
+			}
 		});
 	}
 
@@ -69,6 +78,7 @@ export default function useResponses(view, isSpam = false, formId = 0) {
 	const [folderCounts, setFolderCounts] = useState({
 		inbox: 0,
 		spam: 0,
+		unread: 0,
 	});
 
 	const [refreshToken, setRefreshToken] = useState(0);
@@ -111,10 +121,14 @@ export default function useResponses(view, isSpam = false, formId = 0) {
 					response.headers.get('X-PRC-Spam-Total') || '0',
 					10
 				);
+				const unread = parseInt(
+					response.headers.get('X-PRC-Unread-Total') || '0',
+					10
+				);
 				const data = await response.json();
 				setResponses(data);
 				setPaginationInfo({ totalItems: total, totalPages });
-				setFolderCounts({ inbox, spam });
+				setFolderCounts({ inbox, spam, unread });
 			})
 			.catch((err) => {
 				if (err.name !== 'AbortError') {

@@ -33,14 +33,16 @@ class Form_Response_Schema {
 	 * Current responses table schema version.
 	 *
 	 * v2: added `is_spam` flag + (is_spam, created_at) index for spam foldering.
+	 * v3: added `is_unread` flag + (is_unread, created_at) index for read/unread.
 	 */
-	const SCHEMA_VERSION = '2';
+	const SCHEMA_VERSION = '3';
 
 	/**
 	 * Ensures the responses table matches the current schema version.
 	 */
 	public function maybe_upgrade_table() {
-		if ( self::SCHEMA_VERSION === get_option( self::SCHEMA_VERSION_OPTION, '' ) ) {
+		$previous = (string) get_option( self::SCHEMA_VERSION_OPTION, '' );
+		if ( self::SCHEMA_VERSION === $previous ) {
 			return;
 		}
 
@@ -50,7 +52,25 @@ class Form_Response_Schema {
 			return;
 		}
 
+		// Existing rows inherit DEFAULT 1 from the new column; treat pre-v3
+		// responses as already read so upgrades do not flood the unread badge.
+		if ( '' !== $previous && version_compare( $previous, '3', '<' ) ) {
+			$this->mark_existing_rows_read();
+		}
+
 		update_option( self::SCHEMA_VERSION_OPTION, self::SCHEMA_VERSION, false );
+	}
+
+	/**
+	 * After adding is_unread, mark all current rows as read.
+	 *
+	 * New inserts keep DEFAULT 1 (unread).
+	 */
+	private function mark_existing_rows_read() {
+		global $wpdb;
+
+		$table_name = $this->get_table_name();
+		$wpdb->query( "UPDATE {$table_name} SET is_unread = 0" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	}
 
 	/**
@@ -106,13 +126,15 @@ class Form_Response_Schema {
 			user_id BIGINT UNSIGNED DEFAULT NULL,
 			user_agent VARCHAR(255) DEFAULT NULL,
 			is_spam TINYINT(1) NOT NULL DEFAULT 0,
+			is_unread TINYINT(1) NOT NULL DEFAULT 1,
 			PRIMARY KEY  (id),
 			KEY idx_created_at (created_at),
 			KEY idx_form_id (form_id),
 			KEY idx_form_name (form_name),
 			KEY idx_email (email),
 			KEY idx_status (status),
-			KEY idx_is_spam_created_at (is_spam,created_at)
+			KEY idx_is_spam_created_at (is_spam,created_at),
+			KEY idx_is_unread_created_at (is_unread,created_at)
 		) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

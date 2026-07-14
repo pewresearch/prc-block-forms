@@ -7,7 +7,8 @@ Forms management for the PRC Platform:
 - **`prc-block/synced-form` block** — embed a saved form anywhere on the site
 - **`prc-block-library/forms` data store** — form action registry consumed by the form block editor and downstream plugins
 - **`Form_Renderer` PHP utility** — render a form CPT post by ID or slug from PHP (used by Content Gate, account pages, and other plugins)
-- **Response logging** — custom `prc_form_responses` table with REST API and DataViews admin UI (`src/response-admin/`)
+- **Response logging** — custom `prc_form_responses` table with REST API, unread state, and DataViews admin UI (`src/response-admin/`)
+- **Abilities API** — Jetpack-shaped `prc-block-forms/*` tools for VIP MCP; Jetpack `jetpack-forms/*` abilities are suppressed. Full ability list and unread/spam semantics: [`docs/form.md`](docs/form.md#abilities-api-vip-mcp).
 - **REST submission handlers** — `sendToEmail` and `logResponse` actions consumed by `prc-block/form`
 - **Sample forms** — optional Forms CPT seeds (e.g. **Speaker Request (Sample)** at slug `speaker-request`) provisioned idempotently on `init` via `Form_Sample_Provisioner`; markup lives in `patterns/`
 

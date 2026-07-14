@@ -92,6 +92,23 @@ const fields = [
 		enableSorting: false,
 	},
 	{
+		id: 'isUnread',
+		label: __('Unread', 'prc-block-forms'),
+		getValue: ({ item }) => (item?.isUnread ? 'unread' : 'read'),
+		render: ({ item }) =>
+			item?.isUnread
+				? __('Unread', 'prc-block-forms')
+				: __('Read', 'prc-block-forms'),
+		elements: [
+			{ value: true, label: __('Unread', 'prc-block-forms') },
+			{ value: false, label: __('Read', 'prc-block-forms') },
+		],
+		filterBy: {
+			operators: ['is'],
+		},
+		enableSorting: false,
+	},
+	{
 		id: 'status',
 		label: __('Status', 'prc-block-forms'),
 		getValue: ({ item }) => item?.status || '',

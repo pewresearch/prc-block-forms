@@ -10,7 +10,14 @@ import {
 import { dispatch, useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { __, sprintf } from '@wordpress/i18n';
-import { seen, trash, download, notAllowed, inbox } from '@wordpress/icons';
+import {
+	seen,
+	trash,
+	download,
+	notAllowed,
+	inbox,
+	drafts,
+} from '@wordpress/icons';
 import { useState } from '@wordpress/element';
 
 /**
@@ -31,10 +38,7 @@ function ViewResponseModal({ items }) {
 	const [item] = items;
 	const metaRows = [
 		[__('Date', 'prc-block-forms'), item.date],
-		[
-			__('Form', 'prc-block-forms'),
-			item.formTitle || item.formName || '—',
-		],
+		[__('Form', 'prc-block-forms'), item.formTitle || item.formName || '—'],
 		[__('Action', 'prc-block-forms'), item.action],
 		[__('Status', 'prc-block-forms'), item.status],
 		[__('Source', 'prc-block-forms'), item.sourceUrl || '—'],
@@ -44,6 +48,12 @@ function ViewResponseModal({ items }) {
 			item.isSpam
 				? __('Spam', 'prc-block-forms')
 				: __('Inbox', 'prc-block-forms'),
+		],
+		[
+			__('Read state', 'prc-block-forms'),
+			item.isUnread
+				? __('Unread', 'prc-block-forms')
+				: __('Read', 'prc-block-forms'),
 		],
 	];
 
@@ -163,10 +173,7 @@ async function setSpam(items, isSpam, refresh) {
 			isSpam
 				? sprintf(
 						/* translators: %d: number of responses */
-						__(
-							'%d response(s) marked as spam.',
-							'prc-block-forms'
-						),
+						__('%d response(s) marked as spam.', 'prc-block-forms'),
 						items.length
 					)
 				: sprintf(
@@ -181,10 +188,44 @@ async function setSpam(items, isSpam, refresh) {
 		);
 	} catch {
 		createErrorNotice(
-			__(
-				'Could not update the selected response(s).',
-				'prc-block-forms'
-			),
+			__('Could not update the selected response(s).', 'prc-block-forms'),
+			{ type: 'snackbar' }
+		);
+	}
+	refresh();
+}
+
+async function setUnread(items, isUnread, refresh) {
+	const { createErrorNotice, createSuccessNotice } = dispatch(noticesStore);
+	try {
+		await apiFetch({
+			path: '/prc-api/v3/form/responses/unread',
+			method: 'POST',
+			data: {
+				ids: items.map((item) => item.id),
+				is_unread: isUnread,
+			},
+		});
+		createSuccessNotice(
+			isUnread
+				? sprintf(
+						/* translators: %d: number of responses */
+						__(
+							'%d response(s) marked as unread.',
+							'prc-block-forms'
+						),
+						items.length
+					)
+				: sprintf(
+						/* translators: %d: number of responses */
+						__('%d response(s) marked as read.', 'prc-block-forms'),
+						items.length
+					),
+			{ type: 'snackbar' }
+		);
+	} catch {
+		createErrorNotice(
+			__('Could not update the selected response(s).', 'prc-block-forms'),
 			{ type: 'snackbar' }
 		);
 	}
@@ -211,6 +252,22 @@ export default function getActions(refresh) {
 			callback: (items) => {
 				exportResponsesToCsv(items);
 			},
+		},
+		{
+			id: 'mark-read',
+			label: __('Mark as read', 'prc-block-forms'),
+			icon: drafts,
+			supportsBulk: true,
+			isEligible: (item) => !!item?.id && !!item.isUnread,
+			callback: (items) => setUnread(items, false, refresh),
+		},
+		{
+			id: 'mark-unread',
+			label: __('Mark as unread', 'prc-block-forms'),
+			icon: seen,
+			supportsBulk: true,
+			isEligible: (item) => !!item?.id && !item.isUnread,
+			callback: (items) => setUnread(items, true, refresh),
 		},
 		{
 			id: 'mark-spam',

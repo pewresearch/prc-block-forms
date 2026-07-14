@@ -81,8 +81,10 @@ class Form_Response_Repository {
 				'user_id'        => ! empty( $data['user_id'] ) ? absint( $data['user_id'] ) : null,
 				'user_agent'     => ! empty( $data['user_agent'] ) ? $data['user_agent'] : null,
 				'is_spam'        => empty( $data['is_spam'] ) ? 0 : 1,
+				// New responses are unread by default unless explicitly marked read.
+				'is_unread'      => array_key_exists( 'is_unread', $data ) ? ( empty( $data['is_unread'] ) ? 0 : 1 ) : 1,
 			),
-			array( '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d' )
+			array( '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d' )
 		);
 
 		if ( false === $result ) {
@@ -124,10 +126,14 @@ class Form_Response_Repository {
 	 *     @type string $form_name Filter by form name (legacy inline forms).
 	 *     @type string $status    Filter by status (comma separated for multiple).
 	 *     @type string $search    LIKE search across form name, email, from name, and fields.
-	 *     @type int    $is_spam   Folder: 0 for inbox (default), 1 for spam.
-	 *     @type int    $page      Page number.
-	 *     @type int    $per_page  Rows per page (max 100).
-	 *     @type string $order     'ASC' or 'DESC' by created_at.
+	 *     @type int         $is_spam         Folder: 0 for inbox (default), 1 for spam.
+	 *     @type int|null    $is_unread       Optional: 1 unread only, 0 read only, null = no filter.
+	 *     @type int         $source_post_id  Optional source post filter.
+	 *     @type string      $before          Optional ISO8601 upper bound on created_at (exclusive).
+	 *     @type string      $after           Optional ISO8601 lower bound on created_at (exclusive).
+	 *     @type int         $page            Page number.
+	 *     @type int         $per_page        Rows per page (max 100).
+	 *     @type string      $order           'ASC' or 'DESC' by created_at.
 	 * }
 	 * @return array{items: array, total: int, pages: int}
 	 */
@@ -137,20 +143,29 @@ class Form_Response_Repository {
 		$args = wp_parse_args(
 			$args,
 			array(
-				'form_id'   => 0,
-				'form_name' => '',
-				'status'    => '',
-				'search'    => '',
-				'is_spam'   => 0,
-				'page'      => 1,
-				'per_page'  => 25,
-				'order'     => 'DESC',
+				'form_id'        => 0,
+				'form_name'      => '',
+				'status'         => '',
+				'search'         => '',
+				'is_spam'        => 0,
+				'is_unread'      => null,
+				'source_post_id' => 0,
+				'before'         => '',
+				'after'          => '',
+				'page'           => 1,
+				'per_page'       => 25,
+				'order'          => 'DESC',
 			)
 		);
 
 		$table_name = $this->schema->get_table_name();
 		$where      = array( 'is_spam = %d' );
 		$values     = array( $args['is_spam'] ? 1 : 0 );
+
+		if ( null !== $args['is_unread'] && '' !== $args['is_unread'] ) {
+			$where[]  = 'is_unread = %d';
+			$values[] = $args['is_unread'] ? 1 : 0;
+		}
 
 		if ( ! empty( $args['form_id'] ) ) {
 			$where[]  = 'form_id = %d';
@@ -160,6 +175,11 @@ class Form_Response_Repository {
 		if ( ! empty( $args['form_name'] ) ) {
 			$where[]  = 'form_name = %s';
 			$values[] = $args['form_name'];
+		}
+
+		if ( ! empty( $args['source_post_id'] ) ) {
+			$where[]  = 'source_post_id = %d';
+			$values[] = absint( $args['source_post_id'] );
 		}
 
 		if ( ! empty( $args['status'] ) ) {
@@ -181,6 +201,22 @@ class Form_Response_Repository {
 			$values[]    = $search_like;
 			$values[]    = $search_like;
 			$values[]    = $search_like;
+		}
+
+		if ( ! empty( $args['before'] ) ) {
+			$before = $this->normalize_datetime_bound( $args['before'] );
+			if ( $before ) {
+				$where[]  = 'created_at < %s';
+				$values[] = $before;
+			}
+		}
+
+		if ( ! empty( $args['after'] ) ) {
+			$after = $this->normalize_datetime_bound( $args['after'] );
+			if ( $after ) {
+				$where[]  = 'created_at > %s';
+				$values[] = $after;
+			}
 		}
 
 		$where_clause = implode( ' AND ', $where );
@@ -269,19 +305,50 @@ class Form_Response_Repository {
 	}
 
 	/**
-	 * Gets inbox and spam folder totals.
+	 * Marks responses as read or unread.
+	 *
+	 * @param int[] $ids       The row IDs to update.
+	 * @param bool  $is_unread True to mark unread, false to mark read.
+	 * @return int Number of rows updated.
+	 */
+	public function set_unread( array $ids, $is_unread ) {
+		global $wpdb;
+
+		$ids = array_filter( array_map( 'absint', $ids ) );
+		if ( empty( $ids ) ) {
+			return 0;
+		}
+
+		$table_name   = $this->schema->get_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+
+		$updated = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$table_name} SET is_unread = %d WHERE id IN ( {$placeholders} )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				array_merge( array( $is_unread ? 1 : 0 ), $ids )
+			)
+		);
+
+		return $updated ? (int) $updated : 0;
+	}
+
+	/**
+	 * Gets inbox, spam, and unread folder totals.
+	 *
+	 * Unread counts only non-spam (inbox) rows.
 	 *
 	 * @param int    $form_id   Optional form post ID to scope counts.
 	 * @param string $form_name Optional legacy form name to scope counts.
-	 * @return array{inbox: int, spam: int}
+	 * @return array{inbox: int, spam: int, unread: int}
 	 */
 	public function get_folder_counts( int $form_id = 0, string $form_name = '' ) {
 		global $wpdb;
 
 		if ( ! $this->schema->table_exists() ) {
 			return array(
-				'inbox' => 0,
-				'spam'  => 0,
+				'inbox'  => 0,
+				'spam'   => 0,
+				'unread' => 0,
 			);
 		}
 
@@ -297,11 +364,9 @@ class Form_Response_Repository {
 			$values[] = $form_name;
 		}
 
-		$sql = "SELECT is_spam, COUNT(*) AS total FROM {$table_name}";
-		if ( $where ) {
-			$sql .= ' WHERE ' . implode( ' AND ', $where );
-		}
-		$sql .= ' GROUP BY is_spam';
+		$where_sql = $where ? ' WHERE ' . implode( ' AND ', $where ) : '';
+
+		$sql = "SELECT is_spam, COUNT(*) AS total FROM {$table_name}{$where_sql} GROUP BY is_spam";
 
 		if ( $values ) {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -312,11 +377,52 @@ class Form_Response_Repository {
 		}
 
 		$counts = array(
-			'inbox' => 0,
-			'spam'  => 0,
+			'inbox'  => 0,
+			'spam'   => 0,
+			'unread' => 0,
 		);
 		foreach ( ( $rows ? $rows : array() ) as $row ) {
 			$counts[ empty( $row['is_spam'] ) ? 'inbox' : 'spam' ] = (int) $row['total'];
+		}
+
+		$unread_where   = array_merge( array( 'is_spam = 0', 'is_unread = 1' ), $where );
+		$unread_values  = $values;
+		$unread_sql     = 'SELECT COUNT(*) FROM ' . $table_name . ' WHERE ' . implode( ' AND ', $unread_where );
+		if ( $unread_values ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$counts['unread'] = (int) $wpdb->get_var( $wpdb->prepare( $unread_sql, $unread_values ) );
+		} else {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$counts['unread'] = (int) $wpdb->get_var( $unread_sql );
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Count responses grouped by form_id for published forms list enrichment.
+	 *
+	 * @param int[] $form_ids Form post IDs.
+	 * @return array<int, int> Map of form_id => response count (inbox + spam).
+	 */
+	public function count_by_form_ids( array $form_ids ) {
+		global $wpdb;
+
+		$form_ids = array_values( array_filter( array_map( 'absint', $form_ids ) ) );
+		if ( empty( $form_ids ) || ! $this->schema->table_exists() ) {
+			return array();
+		}
+
+		$table_name   = $this->schema->get_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $form_ids ), '%d' ) );
+		$sql          = "SELECT form_id, COUNT(*) AS total FROM {$table_name} WHERE form_id IN ( {$placeholders} ) GROUP BY form_id";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $form_ids ), ARRAY_A );
+
+		$counts = array();
+		foreach ( ( $rows ? $rows : array() ) as $row ) {
+			$counts[ (int) $row['form_id'] ] = (int) $row['total'];
 		}
 
 		return $counts;
@@ -429,7 +535,28 @@ class Form_Response_Repository {
 			'user_id'        => $row['user_id'] ? (int) $row['user_id'] : 0,
 			'user_agent'     => $row['user_agent'],
 			'is_spam'        => ! empty( $row['is_spam'] ),
+			'is_unread'      => ! array_key_exists( 'is_unread', $row ) || ! empty( $row['is_unread'] ),
 		);
+	}
+
+	/**
+	 * Normalize an ISO8601-ish datetime string to MySQL UTC datetime.
+	 *
+	 * @param string $value Raw datetime bound.
+	 * @return string|null MySQL datetime or null when invalid.
+	 */
+	private function normalize_datetime_bound( $value ) {
+		$value = is_string( $value ) ? trim( $value ) : '';
+		if ( '' === $value ) {
+			return null;
+		}
+
+		$timestamp = strtotime( $value );
+		if ( false === $timestamp ) {
+			return null;
+		}
+
+		return gmdate( 'Y-m-d H:i:s', $timestamp );
 	}
 	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 }

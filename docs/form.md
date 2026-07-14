@@ -259,6 +259,19 @@ Forms can be saved once in the `form` custom post type (registered in `plugins/p
 
 Embeds a form post by `ref` (form post ID). The editor shows a read-only `BlockPreview` with an "Edit form in isolation" toolbar link; the placeholder offers `WPEntitySearch` over the `form` post type plus a "Create New Form" flow. Server-side, `plugins/prc-block-forms/src/synced-form/class-synced-form.php` parses the form post's blocks and renders each through `WP_Block` with `prc-block/form/formPostId` context (the form block declares this in `usesContext`), so `render_form_callback` bakes `formPostId` into the interactivity context and submissions are tied back to their form.
 
+### `sendToEmail` recipient resolution
+
+The `sendToEmail` REST handler (`plugins/prc-block-forms/includes/class-form-send-email.php`) resolves the recipient from server-side configuration — client-supplied `forwardTo` is never trusted on its own.
+
+| Context | Resolution |
+| --- | --- |
+| **Synced form / Forms CPT** (`formPostId` > 0) | Reads `actionConfig.forwardTo` from the saved form post's `prc-block/form` block. Client `forwardTo` / `forwardToSig` in the POST body are **ignored**. |
+| **Inline form** (no `formPostId`) | Requires `actionConfig.forwardTo` **and** a matching `forwardToSig` HMAC (`Form_Send_Email::sign_forward_to()`, keyed with `wp_salt('auth')`). Unsigned or mismatched signatures return `400`. |
+
+Draft form posts resolve `forwardTo` only for users who can edit that form (`read_post`); anonymous visitors get `missing_forward_to` if the CPT is not published.
+
+Abilities that expose form definitions (`prc-block-forms/get-form`) redact `forwardTo` to a presence-only token — agents see that a recipient is configured, not the address.
+
 ### Response logging
 
 Submissions are logged to the custom `{$wpdb->prefix}prc_form_responses` table:
@@ -278,8 +291,26 @@ Submissions are logged to the custom `{$wpdb->prefix}prc_form_responses` table:
 - System fields (`captchaToken`, `nonceToken`) are stripped before storage.
 - `prc_block_form_response_logging_enabled` filter disables logging; `prc_platform_form_response_logged` action fires after each row is written.
 - Spam foldering: responses are classified at log time (link flooding via `prc_form_response_spam_link_threshold`, term blocklist via `prc_form_response_spam_terms`, Akismet when active, final verdict via `prc_form_response_is_spam`) and land in the Responses screen's Spam tab instead of being dropped; "Mark as spam" / "Not spam" bulk actions move rows between folders.
+- Read/unread: new responses default to unread (`is_unread` schema v3). Forms → Responses supports Mark as read / Mark as unread actions, an Unread filter, and `X-PRC-Unread-Total`. REST: `POST /prc-api/v3/form/responses/unread` with `{ ids, is_unread }`. Viewing a response does **not** auto-mark it read.
 - The Responses screen and its REST routes require `manage_options` by default (`prc_form_responses_capability` filter).
 - Responses are retained for 365 days, spam for 30: a recurring Action Scheduler job (`prc_form_responses_retention_purge`) runs every morning and batch-deletes older rows. Adjust via the `prc_form_responses_retention_days` / `prc_form_responses_spam_retention_days` filters (`0` disables); the `prc_form_responses_purged` action fires after each run.
+
+### Abilities API (VIP MCP)
+
+`@prc/block-forms` registers Jetpack Forms–shaped abilities under `prc-block-forms/*` for agents:
+
+| Ability | Purpose |
+| --- | --- |
+| `prc-block-forms/list-forms` | List form CPT posts + response counts |
+| `prc-block-forms/get-form` | Form details + parsed `form-input-*` fields (`forwardTo` redacted) |
+| `prc-block-forms/create-form` | Create form (optional block `content`; empty shell if omitted) |
+| `prc-block-forms/delete-form` | Trash form CPT |
+| `prc-block-forms/get-responses` | List/filter responses (spam folder, unread, search, dates) |
+| `prc-block-forms/update-response` | Spam/inbox, unread toggle, or permanent delete (`trash`) |
+| `prc-block-forms/bulk-update-responses` | Bulk spam / read / unread |
+| `prc-block-forms/get-status-counts` | Inbox, spam, and unread counts |
+
+Jetpack's `jetpack-forms/*` abilities are unregistered (and kept off REST/MCP) so agents use the PRC surface — parallel to disabling the `jetpack/contact-form` block. Extend the disabled slug list with `prc_block_forms_disabled_jetpack_abilities`.
 
 ## Related Blocks
 

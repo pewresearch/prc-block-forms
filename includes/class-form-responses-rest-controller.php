@@ -74,6 +74,10 @@ class Form_Responses_REST_Controller {
 						'type'    => 'integer',
 						'default' => 0,
 					),
+					'is_unread' => array(
+						'type'    => 'integer',
+						'default' => -1,
+					),
 					'order'     => array(
 						'type'    => 'string',
 						'default' => 'desc',
@@ -140,6 +144,29 @@ class Form_Responses_REST_Controller {
 				),
 			)
 		);
+
+		register_rest_route(
+			'prc-api/v3',
+			'form/responses/unread',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'set_responses_unread' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'ids'       => array(
+						'type'     => 'array',
+						'required' => true,
+						'items'    => array(
+							'type' => 'integer',
+						),
+					),
+					'is_unread' => array(
+						'type'     => 'boolean',
+						'required' => true,
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -151,18 +178,23 @@ class Form_Responses_REST_Controller {
 	public function get_responses( $request ) {
 		$repository = new Form_Response_Repository();
 
-		$result = $repository->query(
-			array(
-				'page'      => $request->get_param( 'page' ),
-				'per_page'  => $request->get_param( 'per_page' ),
-				'search'    => sanitize_text_field( $request->get_param( 'search' ) ),
-				'form_id'   => absint( $request->get_param( 'form_id' ) ),
-				'form_name' => sanitize_text_field( $request->get_param( 'form_name' ) ),
-				'status'    => sanitize_text_field( $request->get_param( 'status' ) ),
-				'is_spam'   => absint( $request->get_param( 'is_spam' ) ),
-				'order'     => $request->get_param( 'order' ),
-			)
+		$query_args = array(
+			'page'      => $request->get_param( 'page' ),
+			'per_page'  => $request->get_param( 'per_page' ),
+			'search'    => sanitize_text_field( $request->get_param( 'search' ) ),
+			'form_id'   => absint( $request->get_param( 'form_id' ) ),
+			'form_name' => sanitize_text_field( $request->get_param( 'form_name' ) ),
+			'status'    => sanitize_text_field( $request->get_param( 'status' ) ),
+			'is_spam'   => absint( $request->get_param( 'is_spam' ) ),
+			'order'     => $request->get_param( 'order' ),
 		);
+
+		$is_unread = $request->get_param( 'is_unread' );
+		if ( null !== $is_unread && '' !== $is_unread && -1 !== (int) $is_unread ) {
+			$query_args['is_unread'] = absint( $is_unread ) ? 1 : 0;
+		}
+
+		$result = $repository->query( $query_args );
 
 		$items  = array_map( array( $this, 'prepare_response_for_ui' ), $result['items'] );
 		$counts = $repository->get_folder_counts(
@@ -175,6 +207,7 @@ class Form_Responses_REST_Controller {
 		$response->header( 'X-WP-TotalPages', (string) $result['pages'] );
 		$response->header( 'X-PRC-Inbox-Total', (string) $counts['inbox'] );
 		$response->header( 'X-PRC-Spam-Total', (string) $counts['spam'] );
+		$response->header( 'X-PRC-Unread-Total', (string) $counts['unread'] );
 
 		return $response;
 	}
@@ -262,6 +295,25 @@ class Form_Responses_REST_Controller {
 	}
 
 	/**
+	 * Mark responses as read or unread.
+	 *
+	 * @param \WP_REST_Request $request The request object.
+	 * @return \WP_REST_Response
+	 */
+	public function set_responses_unread( $request ) {
+		$ids        = (array) $request->get_param( 'ids' );
+		$is_unread  = (bool) $request->get_param( 'is_unread' );
+		$repository = new Form_Response_Repository();
+
+		return new \WP_REST_Response(
+			array(
+				'updated' => $repository->set_unread( $ids, $is_unread ),
+			),
+			200
+		);
+	}
+
+	/**
 	 * Shape a repository row for the DataViews app: resolve the parent form
 	 * title/edit link and the source post title.
 	 *
@@ -302,6 +354,7 @@ class Form_Responses_REST_Controller {
 			'userId'       => $row['user_id'],
 			'userAgent'    => $row['user_agent'],
 			'isSpam'       => $row['is_spam'],
+			'isUnread'     => ! empty( $row['is_unread'] ),
 		);
 	}
 }

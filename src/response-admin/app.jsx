@@ -34,8 +34,8 @@ const DEFAULT_LAYOUTS = {
 
 function getDefaultView(formId = 0) {
 	const tableFields = formId
-		? ['action', 'status', 'source', 'date']
-		: ['form', 'action', 'status', 'source', 'date'];
+		? ['isUnread', 'action', 'status', 'source', 'date']
+		: ['isUnread', 'form', 'action', 'status', 'source', 'date'];
 
 	return {
 		type: 'table',
@@ -123,9 +123,10 @@ export default function ResponsesApp({ formId = 0 }) {
 					{
 						name: 'inbox',
 						title: sprintf(
-							/* translators: %d: number of inbox responses */
-							__('Inbox (%d)', 'prc-block-forms'),
-							folderCounts.inbox
+							/* translators: 1: inbox count, 2: unread count */
+							__('Inbox (%1$d · %2$d unread)', 'prc-block-forms'),
+							folderCounts.inbox,
+							folderCounts.unread || 0
 						),
 					},
 					{

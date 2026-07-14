@@ -33,10 +33,12 @@ class Plugin {
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-loader.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-forms.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-form-renderer.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-form-structure.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-form-send-email.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-form-response-log.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-form-patterns.php';
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-form-sample-provisioner.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/abilities/class-abilities.php';
 		$this->load_form_blocks();
 
 		$this->loader = new Loader();
@@ -83,6 +85,7 @@ class Plugin {
 		new Form_Sample_Provisioner( $this->loader );
 		new Form_Send_Email( $this->loader );
 		new Form_Response_Log( $this->loader );
+		new Abilities( $this->loader );
 
 		if ( class_exists( Synced_Form::class ) ) {
 			new Synced_Form( $this->loader );
