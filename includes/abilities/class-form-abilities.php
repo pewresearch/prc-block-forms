@@ -15,6 +15,13 @@ namespace PRC\Platform\Block_Forms;
 class Form_Abilities {
 
 	/**
+	 * Plugin file used to validate activation on the target site.
+	 *
+	 * @var string
+	 */
+	private const PLUGIN_FILE = 'prc-block-forms/prc-block-forms.php';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Loader $loader Plugin loader.
@@ -66,11 +73,26 @@ class Form_Abilities {
 							'description' => 'Filter by form status.',
 							'enum'        => array( 'publish', 'draft', 'trash' ),
 						),
+						'site_id'  => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'list_forms' ),
-				'permission_callback' => array( $this, 'can_edit_forms' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->list_forms( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = null ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_edit_forms( $input );
+						}
+					);
+				},
 				'meta'                => $this->readonly_meta( 'List reusable form CPT posts used by Synced Form embeds.' ),
 			)
 		);
@@ -90,11 +112,26 @@ class Form_Abilities {
 							'type'        => 'integer',
 							'description' => 'The form ID.',
 						),
+						'site_id' => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'get_form' ),
-				'permission_callback' => array( $this, 'can_get_form' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->get_form( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_get_form( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
 				'meta'                => $this->readonly_meta( 'Returns form CPT metadata plus parsed prc-block/form-input-* fields. Block content has sensitive actionConfig values redacted.' ),
 			)
 		);
@@ -124,11 +161,26 @@ class Form_Abilities {
 							'enum'        => array( 'publish', 'draft' ),
 							'default'     => 'publish',
 						),
+						'site_id' => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'create_form' ),
-				'permission_callback' => array( $this, 'can_edit_forms' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->create_form( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = null ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_edit_forms( $input );
+						}
+					);
+				},
 				'meta'                => $this->write_meta( false, false ),
 			)
 		);
@@ -148,11 +200,26 @@ class Form_Abilities {
 							'type'        => 'integer',
 							'description' => 'The form ID to delete.',
 						),
+						'site_id' => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'delete_form' ),
-				'permission_callback' => array( $this, 'can_delete_form' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->delete_form( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_delete_form( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
 				'meta'                => $this->write_meta( true, true ),
 			)
 		);
@@ -161,7 +228,7 @@ class Form_Abilities {
 	/**
 	 * @return bool
 	 */
-	public function can_edit_forms(): bool {
+	public function can_edit_forms( $input = null ): bool {
 		return current_user_can( 'edit_posts' );
 	}
 
@@ -345,7 +412,7 @@ class Form_Abilities {
 	private function readonly_meta( string $instructions ): array {
 		return array(
 			'annotations'  => array(
-				'instructions' => $instructions,
+				'instructions' => $this->with_site_instructions( $instructions ),
 				'readonly'     => true,
 				'destructive'  => false,
 				'idempotent'   => true,
@@ -366,9 +433,10 @@ class Form_Abilities {
 	private function write_meta( bool $destructive, bool $idempotent ): array {
 		return array(
 			'annotations'  => array(
-				'readonly'    => false,
-				'destructive' => $destructive,
-				'idempotent'  => $idempotent,
+				'instructions' => $this->with_site_instructions( 'Runs this form write operation on the target site.' ),
+				'readonly'     => false,
+				'destructive'  => $destructive,
+				'idempotent'   => $idempotent,
 			),
 			'show_in_rest' => true,
 			'mcp'          => array(
@@ -376,5 +444,30 @@ class Form_Abilities {
 				'type'   => 'tool',
 			),
 		);
+	}
+
+	/**
+	 * Run a callback on the requested target site.
+	 *
+	 * @param array|null $input    Ability input.
+	 * @param callable   $callback Callback to run after site validation/switching.
+	 * @return mixed
+	 */
+	private function with_site( $input, callable $callback ) {
+		return \PRC\Platform\AI\Utils\with_site(
+			\PRC\Platform\AI\Utils\resolve_site_id( is_array( $input ) ? $input : null ),
+			self::PLUGIN_FILE,
+			$callback
+		);
+	}
+
+	/**
+	 * Append standard site targeting instructions.
+	 *
+	 * @param string $instructions Base instructions.
+	 * @return string
+	 */
+	private function with_site_instructions( string $instructions ): string {
+		return trim( $instructions ) . ' Optionally pass site_id to run against a specific multisite blog; defaults to the content site (20). If this plugin is inactive on the target site, the ability returns plugin_inactive_on_site.';
 	}
 }

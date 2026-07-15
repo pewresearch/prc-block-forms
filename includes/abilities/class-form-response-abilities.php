@@ -15,6 +15,13 @@ namespace PRC\Platform\Block_Forms;
 class Form_Response_Abilities {
 
 	/**
+	 * Plugin file used to validate activation on the target site.
+	 *
+	 * @var string
+	 */
+	private const PLUGIN_FILE = 'prc-block-forms/prc-block-forms.php';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Loader $loader Plugin loader.
@@ -78,6 +85,7 @@ class Form_Response_Abilities {
 							'type'        => 'boolean',
 							'description' => 'Set true for unread only, false for read only.',
 						),
+						'site_id'        => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 						'search'         => array(
 							'type'        => 'string',
 							'description' => 'Search within response content and sender info.',
@@ -95,8 +103,22 @@ class Form_Response_Abilities {
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'get_responses' ),
-				'permission_callback' => array( $this, 'can_manage_responses' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->get_responses( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = null ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_manage_responses( $input );
+						}
+					);
+				},
 				'meta'                => $this->meta( true, false, true ),
 			)
 		);
@@ -125,11 +147,26 @@ class Form_Response_Abilities {
 							'type'        => 'boolean',
 							'description' => 'Set false to mark as read, true to mark as unread.',
 						),
+						'site_id'   => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'update_response' ),
-				'permission_callback' => array( $this, 'can_manage_responses' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->update_response( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = null ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_manage_responses( $input );
+						}
+					);
+				},
 				'meta'                => $this->meta( false, true, false ),
 			)
 		);
@@ -156,11 +193,26 @@ class Form_Response_Abilities {
 							'items'       => array( 'type' => 'integer' ),
 							'minItems'    => 1,
 						),
+						'site_id' => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'bulk_update_responses' ),
-				'permission_callback' => array( $this, 'can_manage_responses' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->bulk_update_responses( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = null ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_manage_responses( $input );
+						}
+					);
+				},
 				'meta'                => $this->meta( false, false, true ),
 			)
 		);
@@ -200,11 +252,26 @@ class Form_Response_Abilities {
 							'type'        => 'boolean',
 							'description' => 'When set, recompute folder counts using only matching unread/read rows.',
 						),
+						'site_id'   => \PRC\Platform\AI\Utils\site_id_input_schema_property(),
 					),
 				),
 				'output_schema'       => array( 'type' => 'object' ),
-				'execute_callback'    => array( $this, 'get_status_counts' ),
-				'permission_callback' => array( $this, 'can_manage_responses' ),
+				'execute_callback'    => function ( $input = array() ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->get_status_counts( is_array( $input ) ? $input : array() );
+						}
+					);
+				},
+				'permission_callback' => function ( $input = null ) {
+					return $this->with_site(
+						$input,
+						function () use ( $input ) {
+							return $this->can_manage_responses( $input );
+						}
+					);
+				},
 				'meta'                => $this->meta( true, false, true ),
 			)
 		);
@@ -213,7 +280,7 @@ class Form_Response_Abilities {
 	/**
 	 * @return bool
 	 */
-	public function can_manage_responses(): bool {
+	public function can_manage_responses( $input = null ): bool {
 		return current_user_can( Forms::get_responses_capability() );
 	}
 
@@ -486,15 +553,31 @@ class Form_Response_Abilities {
 	private function meta( bool $readonly, bool $destructive, bool $idempotent ): array {
 		return array(
 			'annotations'  => array(
-				'readonly'    => $readonly,
-				'destructive' => $destructive,
-				'idempotent'  => $idempotent,
+				'instructions' => 'Optionally pass site_id to run against a specific multisite blog; defaults to the content site (20). If this plugin is inactive on the target site, the ability returns plugin_inactive_on_site.',
+				'readonly'     => $readonly,
+				'destructive'  => $destructive,
+				'idempotent'   => $idempotent,
 			),
 			'show_in_rest' => true,
 			'mcp'          => array(
 				'public' => true,
 				'type'   => 'tool',
 			),
+		);
+	}
+
+	/**
+	 * Run a callback on the requested target site.
+	 *
+	 * @param array|null $input    Ability input.
+	 * @param callable   $callback Callback to run after site validation/switching.
+	 * @return mixed
+	 */
+	private function with_site( $input, callable $callback ) {
+		return \PRC\Platform\AI\Utils\with_site(
+			\PRC\Platform\AI\Utils\resolve_site_id( is_array( $input ) ? $input : null ),
+			self::PLUGIN_FILE,
+			$callback
 		);
 	}
 }

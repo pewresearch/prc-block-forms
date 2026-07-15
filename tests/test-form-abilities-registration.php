@@ -8,6 +8,16 @@
 
 declare(strict_types=1);
 
+namespace PRC\Platform\AI\Utils {
+	function site_id_input_schema_property(): array {
+		return array(
+			'type'        => 'integer',
+			'description' => 'Multisite blog ID to run against. Defaults to the content site (20).',
+			'minimum'     => 1,
+		);
+	}
+}
+
 namespace {
 
 	$GLOBALS['__failed']     = 0;
@@ -90,6 +100,10 @@ namespace {
 		$meta = $GLOBALS['__registered'][ $name ]['meta'] ?? array();
 		assert_true( ! empty( $meta['show_in_rest'] ), "{$name} show_in_rest" );
 		assert_true( ! empty( $meta['mcp']['public'] ), "{$name} mcp public" );
+		assert_true(
+			isset( $GLOBALS['__registered'][ $name ]['input_schema']['properties']['site_id'] ),
+			"{$name} includes site_id schema"
+		);
 	}
 
 	assert_true(

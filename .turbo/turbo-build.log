@@ -1,133 +1,133 @@
 
-> @prc/block-forms@1.0.0 build
+> @prc/block-forms@1.1.0 build
 > wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js
 
 assets by chunk 9.77 KiB (id hint: style) 10 assets
-assets by path synced-form/ 6 KiB 4 assets
+assets by path [1m[32msynced-form/[39m[22m 6 KiB 4 assets
 assets by chunk 3.79 KiB (name: form-message/index) 4 assets
 assets by chunk 3.32 KiB (name: form-submit/index) 4 assets
 assets by chunk 2.38 KiB (name: form-captcha/index) 4 assets
-assets by path form-message-bindings/ 1.29 KiB
-  asset form-message-bindings/index.js 943 bytes [compared for emit] [minimized] (name: form-message-bindings/index)
+assets by path [1m[32mform-message-bindings/[39m[22m 1.29 KiB
+  asset [1m[32mform-message-bindings/index.js[39m[22m 943 bytes [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: form-message-bindings/index)
   + 2 assets
 assets by chunk 20.5 KiB (name: form/index)
-  asset form/index.js 20.2 KiB [compared for emit] [minimized] (name: form/index)
-  asset form/index.asset.php 299 bytes [compared for emit] (name: form/index)
+  asset [1m[32mform/index.js[39m[22m 20.2 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: form/index)
+  asset [1m[32mform/index.asset.php[39m[22m 299 bytes [1m[32m[emitted][39m[22m (name: form/index)
 assets by chunk 2.81 KiB (name: form-page/index)
-  asset form-page/index.js 2.64 KiB [compared for emit] [minimized] (name: form-page/index)
-  asset form-page/index.asset.php 173 bytes [compared for emit] (name: form-page/index)
+  asset [1m[32mform-page/index.js[39m[22m 2.64 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: form-page/index)
+  asset [1m[32mform-page/index.asset.php[39m[22m 173 bytes [1m[32m[emitted][39m[22m (name: form-page/index)
 + 10 assets
-orphan modules 281 KiB (javascript) 7.32 KiB (runtime) [orphan] 420 modules
+orphan modules 281 KiB (javascript) 7.32 KiB (runtime) [1m[33m[orphan][39m[22m 420 modules
 runtime modules 13.1 KiB 17 modules
-built modules 5.11 KiB (css/mini-extract) 69.1 KiB (javascript) [built]
+built modules 5.11 KiB (css/mini-extract) 69.1 KiB (javascript) [1m[33m[built][39m[22m
   cacheable modules 5.11 KiB
-    modules by path ./src/form-captcha/ 279 bytes 2 modules
-    modules by path ./src/form-message/ 1.88 KiB 2 modules
-    modules by path ./src/form-submit/ 582 bytes 2 modules
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/form/style.scss 2.28 KiB [built] [code generated]
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/form-page/style.scss 117 bytes [built] [code generated]
+    modules by path [1m./src/form-captcha/[39m[22m 279 bytes 2 modules
+    modules by path [1m./src/form-message/[39m[22m 1.88 KiB 2 modules
+    modules by path [1m./src/form-submit/[39m[22m 582 bytes 2 modules
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/form/style.scss[39m[22m 2.28 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/form-page/style.scss[39m[22m 117 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   javascript modules 69.1 KiB
-    ./src/form/index.js + 31 modules 43.9 KiB [not cacheable] [built] [code generated]
-    ./src/form-captcha/index.js + 9 modules 3.58 KiB [not cacheable] [built] [code generated]
-    ./src/form-message/index.js + 12 modules 5.66 KiB [not cacheable] [built] [code generated]
-    ./src/form-message-bindings/index.js + 4 modules 1.89 KiB [not cacheable] [built] [code generated]
+    [1m./src/form/index.js + 31 modules[39m[22m 43.9 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/form-captcha/index.js + 9 modules[39m[22m 3.58 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/form-message/index.js + 12 modules[39m[22m 5.66 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled successfully in 3655 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 19033 ms
 assets by chunk 9.77 KiB (id hint: style) 10 assets
-assets by path synced-form/ 6 KiB 4 assets
+assets by path [1m[32msynced-form/[39m[22m 6 KiB 4 assets
 assets by chunk 3.79 KiB (name: form-message/index) 4 assets
 assets by chunk 3.32 KiB (name: form-submit/index) 4 assets
 assets by chunk 2.38 KiB (name: form-captcha/index) 4 assets
-assets by path form-message-bindings/ 1.29 KiB
-  asset form-message-bindings/index.js 943 bytes [compared for emit] [minimized] (name: form-message-bindings/index)
+assets by path [1m[32mform-message-bindings/[39m[22m 1.29 KiB
+  asset [1m[32mform-message-bindings/index.js[39m[22m 943 bytes [1m[33m[compared for emit][39m[22m [1m[32m[minimized][39m[22m (name: form-message-bindings/index)
   + 2 assets
 assets by chunk 20.5 KiB (name: form/index)
-  asset form/index.js 20.2 KiB [compared for emit] [minimized] (name: form/index)
-  asset form/index.asset.php 299 bytes [compared for emit] (name: form/index)
+  asset [1m[32mform/index.js[39m[22m 20.2 KiB [1m[33m[compared for emit][39m[22m [1m[32m[minimized][39m[22m (name: form/index)
+  asset [1m[32mform/index.asset.php[39m[22m 299 bytes [1m[33m[compared for emit][39m[22m (name: form/index)
 assets by chunk 2.81 KiB (name: form-page/index)
-  asset form-page/index.js 2.64 KiB [compared for emit] [minimized] (name: form-page/index)
-  asset form-page/index.asset.php 173 bytes [compared for emit] (name: form-page/index)
+  asset [1m[32mform-page/index.js[39m[22m 2.64 KiB [1m[33m[compared for emit][39m[22m [1m[32m[minimized][39m[22m (name: form-page/index)
+  asset [1m[32mform-page/index.asset.php[39m[22m 173 bytes [1m[33m[compared for emit][39m[22m (name: form-page/index)
 + 10 assets
-orphan modules 281 KiB (javascript) 7.32 KiB (runtime) [orphan] 420 modules
+orphan modules 281 KiB (javascript) 7.32 KiB (runtime) [1m[33m[orphan][39m[22m 420 modules
 runtime modules 13.1 KiB 17 modules
-built modules 5.11 KiB (css/mini-extract) 69.1 KiB (javascript) [built]
+built modules 5.11 KiB (css/mini-extract) 69.1 KiB (javascript) [1m[33m[built][39m[22m
   cacheable modules 5.11 KiB
-    modules by path ./src/form-captcha/ 279 bytes 2 modules
-    modules by path ./src/form-message/ 1.88 KiB 2 modules
-    modules by path ./src/form-submit/ 582 bytes 2 modules
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/form/style.scss 2.28 KiB [built] [code generated]
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/form-page/style.scss 117 bytes [built] [code generated]
+    modules by path [1m./src/form-captcha/[39m[22m 279 bytes 2 modules
+    modules by path [1m./src/form-message/[39m[22m 1.88 KiB 2 modules
+    modules by path [1m./src/form-submit/[39m[22m 582 bytes 2 modules
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/form/style.scss[39m[22m 2.28 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/form-page/style.scss[39m[22m 117 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   javascript modules 69.1 KiB
-    ./src/form/index.js + 31 modules 43.9 KiB [not cacheable] [built] [code generated]
-    ./src/form-captcha/index.js + 9 modules 3.58 KiB [not cacheable] [built] [code generated]
-    ./src/form-message/index.js + 12 modules 5.66 KiB [not cacheable] [built] [code generated]
-    ./src/form-message-bindings/index.js + 4 modules 1.89 KiB [not cacheable] [built] [code generated]
+    [1m./src/form/index.js + 31 modules[39m[22m 43.9 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/form-captcha/index.js + 9 modules[39m[22m 3.58 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/form-message/index.js + 12 modules[39m[22m 5.66 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled successfully in 4597 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 21015 ms
 
-assets by path form/view/ 11.3 KiB
-  asset form/view/index.js 11.2 KiB [emitted] [javascript module] [minimized] (name: form/view/index)
-  asset form/view/index.asset.php 130 bytes [emitted] (name: form/view/index)
-assets by path form-captcha/ 696 bytes
-  asset form-captcha/view.js 566 bytes [emitted] [javascript module] [minimized] (name: form-captcha/view)
-  asset form-captcha/view.asset.php 130 bytes [emitted] (name: form-captcha/view)
-Entrypoint form/view/index 11.3 KiB = form/view/index.js 11.2 KiB form/view/index.asset.php 130 bytes
-Entrypoint form-captcha/view 696 bytes = form-captcha/view.js 566 bytes form-captcha/view.asset.php 130 bytes
-orphan modules 2.53 KiB [orphan] 3 modules
-built modules 30.5 KiB [built]
-  ./src/form/view/index.js + 3 modules 29.1 KiB [not cacheable] [built] [code generated]
-  ./src/form-captcha/view.js + 1 modules 1.43 KiB [not cacheable] [built] [code generated]
-webpack 5.106.2 compiled successfully in 2571 ms
+assets by path [1m[32mform/view/[39m[22m 11.3 KiB
+  asset [1m[32mform/view/index.js[39m[22m 11.2 KiB [1m[32m[emitted][39m[22m [javascript module] [1m[32m[minimized][39m[22m (name: form/view/index)
+  asset [1m[32mform/view/index.asset.php[39m[22m 130 bytes [1m[32m[emitted][39m[22m (name: form/view/index)
+assets by path [1m[32mform-captcha/[39m[22m 696 bytes
+  asset [1m[32mform-captcha/view.js[39m[22m 566 bytes [1m[32m[emitted][39m[22m [javascript module] [1m[32m[minimized][39m[22m (name: form-captcha/view)
+  asset [1m[32mform-captcha/view.asset.php[39m[22m 130 bytes [1m[32m[emitted][39m[22m (name: form-captcha/view)
+Entrypoint [1mform/view/index[39m[22m 11.3 KiB = [1m[32mform/view/index.js[39m[22m 11.2 KiB [1m[32mform/view/index.asset.php[39m[22m 130 bytes
+Entrypoint [1mform-captcha/view[39m[22m 696 bytes = [1m[32mform-captcha/view.js[39m[22m 566 bytes [1m[32mform-captcha/view.asset.php[39m[22m 130 bytes
+orphan modules 2.53 KiB [1m[33m[orphan][39m[22m 3 modules
+built modules 30.5 KiB [1m[33m[built][39m[22m
+  [1m./src/form/view/index.js + 3 modules[39m[22m 29.1 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/form-captcha/view.js + 1 modules[39m[22m 1.43 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 8816 ms
 Block metadata PHP file generated at: build/blocks-manifest.php
 assets by chunk 133 KiB (name: index)
-  asset index.js 132 KiB [emitted] [minimized] (name: index)
-  asset index.asset.php 282 bytes [emitted] (name: index)
-assets by path ./*.css 60.4 KiB
-  asset ./style-index-rtl.css 30.2 KiB [emitted] (name: ./style-index) (id hint: style)
-  asset ./style-index.css 30.2 KiB [emitted] (name: ./style-index) (id hint: style)
-asset form/block.json 3.74 KiB [emitted] [from: src/form/block.json] [copied]
-asset form-message/block.json 1.41 KiB [emitted] [from: src/form-message/block.json] [copied]
-asset form-page/block.json 1.34 KiB [emitted] [from: src/form-page/block.json] [copied]
-asset form-submit/block.json 1.16 KiB [emitted] [from: src/form-submit/block.json] [copied]
-asset synced-form/block.json 748 bytes [emitted] [from: src/synced-form/block.json] [copied]
-asset form-captcha/block.json 731 bytes [emitted] [from: src/form-captcha/block.json] [copied]
-asset form-message-bindings/block.json 254 bytes [emitted] [from: src/form-message-bindings/block.json] [copied]
-Entrypoint index 193 KiB = ./style-index.css 30.2 KiB ./style-index-rtl.css 30.2 KiB index.js 132 KiB index.asset.php 282 bytes
-orphan modules 1.03 MiB (javascript) 937 bytes (runtime) [orphan] 748 modules
+  asset [1m[32mindex.js[39m[22m 132 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: index)
+  asset [1m[32mindex.asset.php[39m[22m 282 bytes [1m[32m[emitted][39m[22m (name: index)
+assets by path [1m[32m./*.css[39m[22m 60.4 KiB
+  asset [1m[32m./style-index-rtl.css[39m[22m 30.2 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+  asset [1m[32m./style-index.css[39m[22m 30.2 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+asset [1m[32mform/block.json[39m[22m 3.74 KiB [1m[32m[emitted][39m[22m [from: src/form/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-message/block.json[39m[22m 1.41 KiB [1m[32m[emitted][39m[22m [from: src/form-message/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-page/block.json[39m[22m 1.34 KiB [1m[32m[emitted][39m[22m [from: src/form-page/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-submit/block.json[39m[22m 1.16 KiB [1m[32m[emitted][39m[22m [from: src/form-submit/block.json] [1m[32m[copied][39m[22m
+asset [1m[32msynced-form/block.json[39m[22m 748 bytes [1m[32m[emitted][39m[22m [from: src/synced-form/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-captcha/block.json[39m[22m 731 bytes [1m[32m[emitted][39m[22m [from: src/form-captcha/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-message-bindings/block.json[39m[22m 254 bytes [1m[32m[emitted][39m[22m [from: src/form-message-bindings/block.json] [1m[32m[copied][39m[22m
+Entrypoint [1mindex[39m[22m 193 KiB = [1m[32m./style-index.css[39m[22m 30.2 KiB [1m[32m./style-index-rtl.css[39m[22m 30.2 KiB [1m[32mindex.js[39m[22m 132 KiB [1m[32mindex.asset.php[39m[22m 282 bytes
+orphan modules 1.03 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 748 modules
 runtime modules 4.48 KiB 7 modules
-built modules 339 KiB (javascript) 30.2 KiB (css/mini-extract) [built]
+built modules 339 KiB (javascript) 30.2 KiB (css/mini-extract) [1m[33m[built][39m[22m
   cacheable modules 8.22 KiB (javascript) 30.2 KiB (css/mini-extract)
-    modules by path ../../node_modules/use-sync-external-store/ 2.15 KiB
-      ../../node_modules/use-sync-external-store/shim/index.js 234 bytes [built] [code generated]
-      ../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim...(truncated) 1.92 KiB [built] [code generated]
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/response-admin/style.scss 30.2 KiB [built] [code generated]
-    ../../node_modules/remove-accents/index.js 6.07 KiB [built] [code generated]
-  ./src/response-admin/index.js + 129 modules 330 KiB [not cacheable] [built] [code generated]
-  external "React" 42 bytes [built] [code generated]
-webpack 5.106.2 compiled successfully in 9309 ms
+    modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 2.15 KiB
+      [1m../../node_modules/use-sync-external-store/shim/index.js[39m[22m 234 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+      [1m../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim...(truncated)[39m[22m 1.92 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 30.2 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/response-admin/index.js + 129 modules[39m[22m 330 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 47978 ms
 assets by chunk 133 KiB (name: index)
-  asset index.js 133 KiB [emitted] [minimized] (name: index)
-  asset index.asset.php 309 bytes [emitted] (name: index)
-assets by path ./*.css 60.4 KiB
-  asset ./style-index-rtl.css 30.2 KiB [emitted] (name: ./style-index) (id hint: style)
-  asset ./style-index.css 30.2 KiB [emitted] (name: ./style-index) (id hint: style)
-asset form/block.json 3.74 KiB [emitted] [from: src/form/block.json] [copied]
-asset form-message/block.json 1.41 KiB [emitted] [from: src/form-message/block.json] [copied]
-asset form-page/block.json 1.34 KiB [emitted] [from: src/form-page/block.json] [copied]
-asset form-submit/block.json 1.16 KiB [emitted] [from: src/form-submit/block.json] [copied]
-asset synced-form/block.json 748 bytes [emitted] [from: src/synced-form/block.json] [copied]
-asset form-captcha/block.json 731 bytes [emitted] [from: src/form-captcha/block.json] [copied]
-asset form-message-bindings/block.json 254 bytes [emitted] [from: src/form-message-bindings/block.json] [copied]
-Entrypoint index 194 KiB = ./style-index.css 30.2 KiB ./style-index-rtl.css 30.2 KiB index.js 133 KiB index.asset.php 309 bytes
-orphan modules 1.03 MiB (javascript) 937 bytes (runtime) [orphan] 750 modules
+  asset [1m[32mindex.js[39m[22m 133 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: index)
+  asset [1m[32mindex.asset.php[39m[22m 309 bytes [1m[32m[emitted][39m[22m (name: index)
+assets by path [1m[32m./*.css[39m[22m 60.4 KiB
+  asset [1m[32m./style-index-rtl.css[39m[22m 30.2 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+  asset [1m[32m./style-index.css[39m[22m 30.2 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+asset [1m[32mform/block.json[39m[22m 3.74 KiB [1m[32m[emitted][39m[22m [from: src/form/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-message/block.json[39m[22m 1.41 KiB [1m[32m[emitted][39m[22m [from: src/form-message/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-page/block.json[39m[22m 1.34 KiB [1m[32m[emitted][39m[22m [from: src/form-page/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-submit/block.json[39m[22m 1.16 KiB [1m[32m[emitted][39m[22m [from: src/form-submit/block.json] [1m[32m[copied][39m[22m
+asset [1m[32msynced-form/block.json[39m[22m 748 bytes [1m[32m[emitted][39m[22m [from: src/synced-form/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-captcha/block.json[39m[22m 731 bytes [1m[32m[emitted][39m[22m [from: src/form-captcha/block.json] [1m[32m[copied][39m[22m
+asset [1m[32mform-message-bindings/block.json[39m[22m 254 bytes [1m[32m[emitted][39m[22m [from: src/form-message-bindings/block.json] [1m[32m[copied][39m[22m
+Entrypoint [1mindex[39m[22m 194 KiB = [1m[32m./style-index.css[39m[22m 30.2 KiB [1m[32m./style-index-rtl.css[39m[22m 30.2 KiB [1m[32mindex.js[39m[22m 133 KiB [1m[32mindex.asset.php[39m[22m 309 bytes
+orphan modules 1.03 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 750 modules
 runtime modules 4.48 KiB 7 modules
-built modules 340 KiB (javascript) 30.2 KiB (css/mini-extract) [built]
+built modules 340 KiB (javascript) 30.2 KiB (css/mini-extract) [1m[33m[built][39m[22m
   cacheable modules 8.22 KiB (javascript) 30.2 KiB (css/mini-extract)
-    modules by path ../../node_modules/use-sync-external-store/ 2.15 KiB
-      ../../node_modules/use-sync-external-store/shim/index.js 234 bytes [built] [code generated]
-      ../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim...(truncated) 1.92 KiB [built] [code generated]
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/response-admin/style.scss 30.2 KiB [built] [code generated]
-    ../../node_modules/remove-accents/index.js 6.07 KiB [built] [code generated]
-  ./src/form-responses-panel/index.jsx + 131 modules 332 KiB [not cacheable] [built] [code generated]
-  external "React" 42 bytes [built] [code generated]
-webpack 5.106.2 compiled successfully in 8636 ms
+    modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 2.15 KiB
+      [1m../../node_modules/use-sync-external-store/shim/index.js[39m[22m 234 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+      [1m../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim...(truncated)[39m[22m 1.92 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 30.2 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/form-responses-panel/index.jsx + 131 modules[39m[22m 332 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 37522 ms
