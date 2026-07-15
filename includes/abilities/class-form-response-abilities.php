@@ -38,7 +38,7 @@ class Form_Response_Abilities {
 			array(
 				'label'               => __( 'Get form responses', 'prc-block-forms' ),
 				'description'         => __( 'List or search PRC block form responses. Returns sender info, fields, spam/unread state, and metadata. Supports filtering by form, source post, spam folder, unread, search, and date bounds.', 'prc-block-forms' ),
-				'category'            => 'data-retrieval',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'default'              => array(),
@@ -106,7 +106,7 @@ class Form_Response_Abilities {
 			array(
 				'label'               => __( 'Update form response', 'prc-block-forms' ),
 				'description'         => __( 'Modify a form response. Use to mark as spam, restore to inbox, hard-delete (trash), or toggle read/unread state. PRC has no soft-trash folder — trash permanently deletes.', 'prc-block-forms' ),
-				'category'            => 'data-modification',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'required'             => array( 'id' ),
@@ -139,7 +139,7 @@ class Form_Response_Abilities {
 			array(
 				'label'               => __( 'Bulk update form responses', 'prc-block-forms' ),
 				'description'         => __( 'Mark multiple responses as spam/not spam or read/unread. Each response is processed individually; the result reports per-id success and failures.', 'prc-block-forms' ),
-				'category'            => 'data-modification',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'required'             => array( 'action', 'ids' ),
@@ -170,7 +170,7 @@ class Form_Response_Abilities {
 			array(
 				'label'               => __( 'Get response status counts', 'prc-block-forms' ),
 				'description'         => __( 'Get a summary of form responses grouped by folder. Returns counts for inbox, spam, and unread (non-spam unread). PRC has no trash folder.', 'prc-block-forms' ),
-				'category'            => 'data-retrieval',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'default'              => array(),

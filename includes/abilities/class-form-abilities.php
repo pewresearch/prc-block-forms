@@ -38,7 +38,7 @@ class Form_Abilities {
 			array(
 				'label'               => __( 'List forms (admin)', 'prc-block-forms' ),
 				'description'         => __( 'List PRC block forms (form CPT) with response counts, status, and edit URLs. Supports pagination, search, and status filtering.', 'prc-block-forms' ),
-				'category'            => 'data-retrieval',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'default'              => array(),
@@ -80,7 +80,7 @@ class Form_Abilities {
 			array(
 				'label'               => __( 'Get form details', 'prc-block-forms' ),
 				'description'         => __( 'Get a single PRC block form with its field definitions, status, and edit URL. Sensitive actionConfig values (e.g. forwardTo) are redacted.', 'prc-block-forms' ),
-				'category'            => 'data-retrieval',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'required'             => array( 'id' ),
@@ -104,7 +104,7 @@ class Form_Abilities {
 			array(
 				'label'               => __( 'Create a form', 'prc-block-forms' ),
 				'description'         => __( 'Create a new PRC block form with a title. Optionally provide Gutenberg block content. Prefer status=draft unless the user explicitly asked to publish. Returns the new form ID and edit URL.', 'prc-block-forms' ),
-				'category'            => 'data-modification',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'required'             => array( 'title' ),
@@ -138,7 +138,7 @@ class Form_Abilities {
 			array(
 				'label'               => __( 'Delete a form', 'prc-block-forms' ),
 				'description'         => __( 'Move a PRC block form to the trash. Does not permanently delete. Trashed forms can be restored.', 'prc-block-forms' ),
-				'category'            => 'data-modification',
+				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
 					'required'             => array( 'id' ),

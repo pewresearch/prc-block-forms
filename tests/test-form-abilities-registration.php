@@ -27,6 +27,15 @@ namespace {
 		return true;
 	}
 
+	function wp_register_ability_category( string $name, array $args ) {
+		$GLOBALS['__registered_categories'][ $name ] = $args;
+		return true;
+	}
+
+	function wp_has_ability_category( string $name ): bool {
+		return isset( $GLOBALS['__registered_categories'][ $name ] );
+	}
+
 	function __( string $text, string $domain = 'default' ): string {
 		return $text;
 	}
@@ -39,15 +48,27 @@ namespace {
 		}
 	}
 
+	require_once dirname( __DIR__ ) . '/includes/abilities/class-form-ability-categories.php';
 	require_once dirname( __DIR__ ) . '/includes/abilities/class-form-abilities.php';
 	require_once dirname( __DIR__ ) . '/includes/abilities/class-form-response-abilities.php';
 
 	$loader = new Fake_Loader();
+	$cats   = new \PRC\Platform\Block_Forms\Form_Ability_Categories( $loader );
 	$forms  = new \PRC\Platform\Block_Forms\Form_Abilities( $loader );
 	$resps  = new \PRC\Platform\Block_Forms\Form_Response_Abilities( $loader );
 
+	$cats->register_categories();
 	$forms->register_abilities();
 	$resps->register_abilities();
+
+	assert_true(
+		isset( $GLOBALS['__registered_categories']['forms'] ),
+		'registered forms ability category'
+	);
+	assert_true(
+		'Forms' === ( $GLOBALS['__registered_categories']['forms']['label'] ?? '' ),
+		'forms category label'
+	);
 
 	$expected = array(
 		'prc-block-forms/list-forms',
@@ -62,6 +83,10 @@ namespace {
 
 	foreach ( $expected as $name ) {
 		assert_true( isset( $GLOBALS['__registered'][ $name ] ), "registered {$name}" );
+		assert_true(
+			'forms' === ( $GLOBALS['__registered'][ $name ]['category'] ?? '' ),
+			"{$name} uses forms category"
+		);
 		$meta = $GLOBALS['__registered'][ $name ]['meta'] ?? array();
 		assert_true( ! empty( $meta['show_in_rest'] ), "{$name} show_in_rest" );
 		assert_true( ! empty( $meta['mcp']['public'] ), "{$name} mcp public" );

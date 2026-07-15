@@ -1,5 +1,5 @@
 
-> @prc/block-forms@1.1.0 build
+> @prc/block-forms@1.0.1 build
 > wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js
 
 assets by chunk 9.77 KiB (id hint: style) 10 assets
@@ -32,7 +32,7 @@ built modules 5.11 KiB (css/mini-extract) 69.1 KiB (javascript) [1m[33m[built]
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.66 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 12670 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 20738 ms
 assets by chunk 9.77 KiB (id hint: style) 10 assets
 assets by path [1m[32msynced-form/[39m[22m 6 KiB 4 assets
 assets by chunk 3.79 KiB (name: form-message/index) 4 assets
@@ -63,7 +63,7 @@ built modules 5.11 KiB (css/mini-extract) 69.1 KiB (javascript) [1m[33m[built]
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.66 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 11232 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 15900 ms
 
 assets by path [1m[32mform/view/[39m[22m 11.3 KiB
   asset [1m[32mform/view/index.js[39m[22m 11.2 KiB [1m[32m[emitted][39m[22m [javascript module] [1m[32m[minimized][39m[22m (name: form/view/index)
@@ -77,7 +77,7 @@ orphan modules 2.53 KiB [1m[33m[orphan][39m[22m 3 modules
 built modules 30.5 KiB [1m[33m[built][39m[22m
   [1m./src/form/view/index.js + 3 modules[39m[22m 29.1 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1m./src/form-captcha/view.js + 1 modules[39m[22m 1.43 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 6831 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 10488 ms
 Block metadata PHP file generated at: build/blocks-manifest.php
 assets by chunk 133 KiB (name: index)
   asset [1m[32mindex.js[39m[22m 132 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: index)
@@ -104,7 +104,7 @@ built modules 339 KiB (javascript) 30.2 KiB (css/mini-extract) [1m[33m[built]
     [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1m./src/response-admin/index.js + 129 modules[39m[22m 330 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 19843 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 16231 ms
 assets by chunk 133 KiB (name: index)
   asset [1m[32mindex.js[39m[22m 133 KiB [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m (name: index)
   asset [1m[32mindex.asset.php[39m[22m 309 bytes [1m[32m[emitted][39m[22m (name: index)
@@ -130,4 +130,4 @@ built modules 340 KiB (javascript) 30.2 KiB (css/mini-extract) [1m[33m[built]
     [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1m./src/form-responses-panel/index.jsx + 131 modules[39m[22m 332 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 13961 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 11683 ms
