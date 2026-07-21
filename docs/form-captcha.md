@@ -104,6 +104,18 @@ The block is fully server-side rendered via `render_callback` in `class-form-cap
 5. Turnstile calls the success callback, which sets `captchaToken` and `captchaPassed = true` on the parent form's context.
 6. The form's `onCaptchaPassing` callback detects `captchaPassed` and fires `sendSubmission`.
 
+### Turnstile client errors
+
+`view.js` registers an `error-callback` on `turnstile.render()` so recoverable Cloudflare errors can auto-retry without throwing an uncaught `TurnstileError` (for example code `300031`). Behavior:
+
+| Outcome | What happens |
+|---------|----------------|
+| Recoverable error | Turnstile may retry; the widget stays mounted. |
+| Non-retryable code (`NON_RETRYABLE_TURNSTILE_CODES`, e.g. invalid site key) | User sees a `turnstile-error` entry on the parent form context; submission stays blocked. |
+| Repeated failures | After several failures, the widget is removed via `turnstile.remove()` and captcha state resets so the user can try again. |
+
+User-facing copy is mapped in `getTurnstileErrorMessage()`; see [Cloudflare Turnstile client error codes](https://developers.cloudflare.com/turnstile/troubleshooting/client-side-errors/error-codes/).
+
 ## Related Blocks
 
 | Block            | Relationship                                                                                       |

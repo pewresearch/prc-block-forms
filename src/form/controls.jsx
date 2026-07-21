@@ -307,14 +307,12 @@ export default function Controls({
 			<InspectorControls>
 				<PanelBody title={__('Form Settings')}>
 					<TextControl
-						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={__('Form Name')}
 						value={_formName}
 						onChange={(value) => setFormName(value)}
 					/>
 					<SelectControl
-						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={__('Action', 'form')}
 						options={actionOptions}

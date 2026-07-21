@@ -16,7 +16,6 @@ export default function SendToEmailConfigComponent({ config, setConfig }) {
 
 	return (
 		<TextControl
-			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			type="email"
 			label={__('Forward To', 'form')}

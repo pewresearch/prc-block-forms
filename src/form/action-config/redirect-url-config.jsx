@@ -16,7 +16,6 @@ export default function RedirectUrlConfigComponent({ config, setConfig }) {
 
 	return (
 		<TextControl
-			__next40pxDefaultSize
 			__nextHasNoMarginBottom
 			label={__('Redirect URL', 'form')}
 			help={

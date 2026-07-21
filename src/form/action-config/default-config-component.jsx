@@ -29,7 +29,6 @@ export default function DefaultActionConfigComponent({
 			{keys.map((key) => (
 				<TextControl
 					key={key}
-					__next40pxDefaultSize
 					__nextHasNoMarginBottom
 					label={key}
 					value={config?.[key] ?? ''}
