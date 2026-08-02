@@ -544,12 +544,16 @@ const { state, actions } = store('prc-block/form', {
 		subscribe: async (fieldsForSubmission) => {
 			const context = getContext();
 			const actionConfig = context.actionConfig || {};
-			const { interest } = actionConfig;
+			const { audienceId, segmentId, interest } = actionConfig;
+			const hasAudience =
+				typeof audienceId === 'string' && audienceId.length > 0;
+			const hasLegacyInterest =
+				typeof interest === 'string' && interest.length > 0;
 
-			if (!interest || interest.length < 1) {
+			if (!hasAudience && !hasLegacyInterest) {
 				return Promise.reject({
 					status: 'error',
-					message: 'No interest id provided',
+					message: 'No Mailchimp audience or interest id provided',
 				});
 			}
 
@@ -562,7 +566,9 @@ const { state, actions } = store('prc-block/form', {
 
 			return subscribe({
 				emailAddress,
-				interest,
+				audienceId: hasAudience ? audienceId : false,
+				segmentId: hasAudience ? segmentId || false : false,
+				interest: !hasAudience ? interest : false,
 				captchaToken,
 				formId: context.formName || false,
 			})
@@ -580,19 +586,27 @@ const { state, actions } = store('prc-block/form', {
 				);
 		},
 		subscribeSelect: async (fieldsForSubmission) => {
+			const context = getContext();
+			const actionConfig = context.actionConfig || {};
+			const { audienceId } = actionConfig;
+			const hasAudience =
+				typeof audienceId === 'string' && audienceId.length > 0;
+
 			const emailAddress = fieldsForSubmission.find((field) =>
 				['emailAddress', 'email'].includes(field.name)
 			)?.value;
 			const captchaToken = fieldsForSubmission.find(
 				(field) => field.name === 'captchaToken'
 			)?.value;
-			const interests = fieldsForSubmission
+			const selectedValues = fieldsForSubmission
 				.filter((field) => field.type === 'checkbox' && field.checked)
 				.map((field) => field.value);
 
 			return subscribe({
 				emailAddress,
-				interests,
+				audienceId: hasAudience ? audienceId : false,
+				segmentIds: hasAudience ? selectedValues : false,
+				interests: !hasAudience ? selectedValues : false,
 				captchaToken,
 				apiKey: 'mailchimp-select',
 			})

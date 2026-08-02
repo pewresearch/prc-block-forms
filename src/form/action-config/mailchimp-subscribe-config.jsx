@@ -6,7 +6,6 @@ import { MailchimpSegmentSelect } from '@prc/components';
 /**
  * WordPress Dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { PanelRow } from '@wordpress/components';
 
 /**
@@ -14,23 +13,29 @@ import { PanelRow } from '@wordpress/components';
  *
  * @param {Object}   props
  * @param {Object}   props.config    Current action config values.
- * @param {Function} props.setConfig Updates a single config key.
+ * @param {Function} props.setConfig Updates a config key or patch object.
  */
 export default function MailchimpSubscribeConfigComponent({
 	config,
 	setConfig,
 }) {
-	const interest = config?.interest ?? '';
+	const audienceId = config?.audienceId ?? '';
+	const segmentId = config?.segmentId ?? '';
 
 	return (
 		<PanelRow>
 			<MailchimpSegmentSelect
-				label={__('Choose Newsletter Segment', 'form')}
-				value={interest}
-				onChange={(newInterestId) =>
-					setConfig('interest', newInterestId)
+				audienceId={audienceId}
+				segmentId={segmentId}
+				onAudienceChange={(nextAudienceId) =>
+					setConfig({
+						audienceId: nextAudienceId,
+						segmentId: '',
+					})
 				}
-				apiKey="mailchimp-form"
+				onSegmentChange={(nextSegmentId) =>
+					setConfig('segmentId', nextSegmentId)
+				}
 			/>
 		</PanelRow>
 	);

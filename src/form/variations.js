@@ -33,7 +33,8 @@ export default function registerFormVariations() {
 			namespace: 'prc-block/form',
 			action: 'subscribe',
 			actionConfig: {
-				interest: '',
+				audienceId: '',
+				segmentId: '',
 			},
 		},
 		innerBlocks: MAILCHIMP_SUBSCRIBE_TEMPLATE,
@@ -64,7 +65,8 @@ export default function registerFormVariations() {
 			namespace: 'prc-block/form',
 			action: 'subscribeSelect',
 			actionConfig: {
-				interests: [],
+				audienceId: '',
+				segmentIds: [],
 			},
 		},
 		innerBlocks: MAILCHIMP_SELECT_TEMPLATE,

@@ -103,7 +103,8 @@ export default function registerDefaultForms() {
 		method: 'api',
 		template: MAILCHIMP_SUBSCRIBE_TEMPLATE,
 		configDefaults: {
-			interest: '',
+			audienceId: '',
+			segmentId: '',
 		},
 		ConfigComponent: MailchimpSubscribeConfigComponent,
 		supportsRedirect: true,
@@ -118,7 +119,8 @@ export default function registerDefaultForms() {
 		method: 'api',
 		template: MAILCHIMP_SELECT_TEMPLATE,
 		configDefaults: {
-			interests: [],
+			audienceId: '',
+			segmentIds: [],
 		},
 		ConfigComponent: MailchimpSelectConfigComponent,
 		supportsRedirect: true,

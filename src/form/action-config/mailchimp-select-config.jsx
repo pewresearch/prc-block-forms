@@ -16,7 +16,7 @@ const findMatchingCheckboxBlockField = (blocks, value) =>
 		if (block.name !== 'prc-block/form-input-checkbox') {
 			return false;
 		}
-		return block.attributes.value === value;
+		return String(block.attributes.value) === String(value);
 	});
 
 /**
@@ -32,7 +32,8 @@ export default function MailchimpSelectConfigComponent({
 	setConfig,
 	clientId,
 }) {
-	const interests = config?.interests ?? [];
+	const audienceId = config?.audienceId ?? '';
+	const segmentIds = config?.segmentIds ?? [];
 
 	const { insertBlock, removeBlock, updateBlockAttributes } =
 		useDispatch(blockEditorStore);
@@ -77,17 +78,36 @@ export default function MailchimpSelectConfigComponent({
 	};
 
 	const onUpdate = (updatedSelected) => {
-		setConfig('interests', [...updatedSelected]);
+		setConfig('segmentIds', [...updatedSelected]);
+	};
+
+	const onAudienceChange = (nextAudienceId) => {
+		setConfig({
+			audienceId: nextAudienceId,
+			segmentIds: [],
+		});
+		// Remove previously inserted checkbox fields when audience changes.
+		innerBlocks
+			.filter((block) => block.name === 'prc-block/form-input-checkbox')
+			.forEach((block) => {
+				updateBlockAttributes(block.clientId, {
+					lock: {
+						remove: false,
+					},
+				});
+				removeBlock(block.clientId, false);
+			});
 	};
 
 	return (
 		<PanelRow>
 			<MailchimpSegmentList
-				interests={interests}
+				audienceId={audienceId}
+				onAudienceChange={onAudienceChange}
+				segmentIds={segmentIds}
 				onAdd={onAdd}
 				onRemove={onRemove}
 				onUpdate={onUpdate}
-				apiKey="mailchimp-select"
 			/>
 		</PanelRow>
 	);

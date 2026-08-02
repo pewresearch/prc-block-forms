@@ -104,11 +104,15 @@ function ActionConfigPanel({
 		...(actionConfig || {}),
 	};
 
-	const setConfig = (key, value) => {
+	const setConfig = (keyOrPatch, value) => {
+		const patch =
+			typeof keyOrPatch === 'object' && null !== keyOrPatch
+				? keyOrPatch
+				: { [keyOrPatch]: value };
 		setAttributes({
 			actionConfig: {
 				...config,
-				[key]: value,
+				...patch,
 			},
 		});
 	};
