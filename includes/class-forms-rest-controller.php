@@ -242,16 +242,17 @@ class Forms_REST_Controller {
 		}
 
 		$row = array(
-			'id'          => (int) $post->ID,
-			'title'       => get_the_title( $post ),
-			'status'      => $post->post_status,
-			'date'        => mysql2date( 'c', $post->post_date, false ),
-			'modified'    => mysql2date( 'c', $post->post_modified, false ),
-			'edit_url'    => (string) get_edit_post_link( $post->ID, 'raw' ),
-			'author'      => (string) get_the_author_meta( 'display_name', $post->post_author ),
-			'action'      => $action,
-			'method'      => $method,
-			'field_count' => $field_count,
+			'id'             => (int) $post->ID,
+			'title'          => get_the_title( $post ),
+			'status'         => $post->post_status,
+			'previousStatus' => (string) get_post_meta( $post->ID, '_wp_trash_meta_status', true ),
+			'date'           => mysql2date( 'c', $post->post_date, false ),
+			'modified'       => mysql2date( 'c', $post->post_modified, false ),
+			'edit_url'       => (string) get_edit_post_link( $post->ID, 'raw' ),
+			'author'         => (string) get_the_author_meta( 'display_name', $post->post_author ),
+			'action'         => $action,
+			'method'         => $method,
+			'field_count'    => $field_count,
 		);
 
 		// Match the responses routes: only expose counts when the caller can
