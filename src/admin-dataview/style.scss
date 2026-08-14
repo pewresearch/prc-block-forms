@@ -1,0 +1,20 @@
+.prc-forms-library__unread.is-unread {
+	font-weight: 600;
+}
+
+.prc-forms-library-responses-modal {
+	.components-modal__content {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
+	// ResponsesApp mounts as .prc-form-responses, not #prc-form-responses-admin.
+	// Give it a flex child so DataViews can use the remaining modal height.
+	.prc-form-responses {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
+	}
+}

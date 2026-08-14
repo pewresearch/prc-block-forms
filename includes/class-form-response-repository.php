@@ -429,6 +429,38 @@ class Form_Response_Repository {
 	}
 
 	/**
+	 * Count unread inbox responses grouped by form_id.
+	 *
+	 * Batched counterpart to `get_folder_counts()` so the forms list can show an
+	 * unread column without one query per row.
+	 *
+	 * @param int[] $form_ids Form post IDs.
+	 * @return array<int, int> Map of form_id => unread count.
+	 */
+	public function unread_count_by_form_ids( array $form_ids ) {
+		global $wpdb;
+
+		$form_ids = array_values( array_filter( array_map( 'absint', $form_ids ) ) );
+		if ( empty( $form_ids ) || ! $this->schema->table_exists() ) {
+			return array();
+		}
+
+		$table_name   = $this->schema->get_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $form_ids ), '%d' ) );
+		$sql          = "SELECT form_id, COUNT(*) AS total FROM {$table_name} WHERE is_spam = 0 AND is_unread = 1 AND form_id IN ( {$placeholders} ) GROUP BY form_id";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $form_ids ), ARRAY_A );
+
+		$counts = array();
+		foreach ( ( $rows ? $rows : array() ) as $row ) {
+			$counts[ (int) $row['form_id'] ] = (int) $row['total'];
+		}
+
+		return $counts;
+	}
+
+	/**
 	 * Deletes responses older than the retention window, in batches.
 	 *
 	 * Batching keeps each DELETE small (VIP at-scale guidance) and makes the

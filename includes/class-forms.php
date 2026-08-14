@@ -35,6 +35,8 @@ class Forms {
 		require_once __DIR__ . '/class-form-responses-assets.php';
 		require_once __DIR__ . '/class-form-responses-admin.php';
 		require_once __DIR__ . '/class-form-responses-editor.php';
+		require_once __DIR__ . '/class-form-list.php';
+		require_once __DIR__ . '/class-forms-rest-controller.php';
 
 		$loader->add_action( 'init', $this, 'register_post_type' );
 		$loader->add_action( 'admin_init', $this, 'maybe_upgrade_responses_table' );
@@ -43,6 +45,8 @@ class Forms {
 		new Form_Responses_REST_Controller( $loader );
 		new Form_Responses_Admin( $loader );
 		new Form_Responses_Editor( $loader );
+		new Form_List( $loader );
+		new Forms_REST_Controller( $loader );
 	}
 
 	/**
@@ -91,7 +95,9 @@ class Forms {
 	 *
 	 * Forms are block-composed definitions (a `prc-block/form` block plus its
 	 * input blocks) that render only where embedded via `prc-block/synced-form`,
-	 * so the post type is not publicly queryable.
+	 * so the post type is not publicly queryable. `presence` support puts the
+	 * form editor, All Forms list, and synced-form block on the same Presence
+	 * rooms (`postType/form:{id}`).
 	 *
 	 * @hook init
 	 */
@@ -102,7 +108,7 @@ class Forms {
 				'label'               => __( 'Form', 'prc-block-forms' ),
 				'description'         => __( 'A store for form blocks. Save a form once, embed it anywhere with the Synced Form block, and review its responses centrally.', 'prc-block-forms' ),
 				'labels'              => self::get_labels(),
-				'supports'            => array( 'title', 'editor', 'author', 'custom-fields', 'revisions' ),
+				'supports'            => array( 'title', 'editor', 'author', 'custom-fields', 'revisions', 'prc-publish-workflows', 'presence' ),
 				'hierarchical'        => false,
 				'public'              => false,
 				'show_ui'             => true,
@@ -121,12 +127,6 @@ class Forms {
 				'template'            => array( array( 'prc-block/form' ) ),
 			)
 		);
-
-		// Opt the form CPT into the Presence API so the synced-form block can
-		// detect when someone else has the form open and gate polling on it.
-		if ( function_exists( 'wp_presence_post_room' ) ) {
-			add_post_type_support( self::POST_TYPE, 'presence' );
-		}
 	}
 
 	/**

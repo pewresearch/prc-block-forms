@@ -1,14 +1,16 @@
 {
 	"name": "@prc/block-forms",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Forms management for the PRC Platform: Forms CPT, response logging, REST handlers, form blocks, and the Synced Form block.",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
-		"build": "wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js",
+		"build": "wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js && wp-scripts build --source-path=src/admin-dataview/ --output-path=build/admin-dataview/",
+		"build:admin-dataview": "wp-scripts build --source-path=src/admin-dataview/ --output-path=build/admin-dataview/",
 		"build:responses-admin": "wp-scripts build --config webpack.responses-admin.config.js",
 		"build:responses-panel": "wp-scripts build --config webpack.form-responses-panel.config.js",
 		"build:synced-form": "wp-scripts build --webpack-copy-php",
 		"start": "wp-scripts start --experimental-modules --webpack-copy-php",
+		"start:admin-dataview": "wp-scripts start --source-path=src/admin-dataview/ --output-path=build/admin-dataview/",
 		"start:responses-admin": "wp-scripts start --config webpack.responses-admin.config.js",
 		"start:responses-panel": "wp-scripts start --config webpack.form-responses-panel.config.js"
 	},
@@ -19,7 +21,7 @@
 		"@prc/controls": "*",
 		"@prc/hooks": "*",
 		"@prc/icons": "*",
-		"@wordpress/dataviews": "^4.19.0",
+		"@wordpress/dataviews": "17.2.0",
 		"@wordpress/icons": "^10.23.0"
 	},
 	"devDependencies": {

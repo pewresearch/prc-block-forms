@@ -359,6 +359,22 @@ return array(
 		),
 		'supports' => array(
 			'anchor' => true,
+			'layout' => array(
+				'type' => 'flex',
+				'default' => array(
+					'type' => 'flex',
+					'orientation' => 'horizontal',
+					'verticalAlignment' => 'center'
+				),
+				'allowInheriting' => false,
+				'allowVerticalAlignment' => true,
+				'allowJustification' => true,
+				'allowOrientation' => true,
+				'allowSizingOnChildren' => true
+			),
+			'dimensions' => array(
+				'minWidth' => true
+			),
 			'spacing' => array(
 				'margin' => array(
 					'top',

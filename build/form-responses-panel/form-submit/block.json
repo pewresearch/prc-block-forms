@@ -20,6 +20,22 @@
   ],
   "supports": {
     "anchor": true,
+    "layout": {
+      "type": "flex",
+      "default": {
+        "type": "flex",
+        "orientation": "horizontal",
+        "verticalAlignment": "center"
+      },
+      "allowInheriting": false,
+      "allowVerticalAlignment": true,
+      "allowJustification": true,
+      "allowOrientation": true,
+      "allowSizingOnChildren": true
+    },
+    "dimensions": {
+      "minWidth": true
+    },
     "spacing": {
       "margin": [
         "top",
