@@ -1,6 +1,6 @@
 {
 	"name": "@prc/block-forms",
-	"version": "1.2.0",
+	"version": "1.1.1",
 	"description": "Forms management for the PRC Platform: Forms CPT, response logging, REST handlers, form blocks, and the Synced Form block.",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
