@@ -1,4 +1,9 @@
 <?php
+/**
+ * Registers the Forms list on the shared Admin DataViews shell.
+ *
+ * @package PRC\Platform\Block_Forms
+ */
 
 namespace PRC\Platform\Block_Forms;
 
@@ -173,12 +178,13 @@ class Form_List {
 	/**
 	 * Human labels for the registered form actions.
 	 *
-	 * Mirrors `registerForm()` in `src/form/register-forms.js`.
+	 * Mirrors `registerForm()` in `src/form/register-forms.js`. Create CRM
+	 * Contact is owned by `prc-crm` and only appears when that plugin is active.
 	 *
 	 * @return array<int, array{value: string, label: string}>
 	 */
 	public static function get_action_options() {
-		return array(
+		$options = array(
 			array(
 				'value' => 'sendToEmail',
 				'label' => __( 'Contact Form', 'prc-block-forms' ),
@@ -200,6 +206,35 @@ class Form_List {
 				'label' => __( 'System Email', 'prc-block-forms' ),
 			),
 		);
+
+		if ( self::is_crm_plugin_active() ) {
+			$options[] = array(
+				'value' => 'createContact',
+				'label' => __( 'Create CRM Contact', 'prc-block-forms' ),
+			);
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Whether PRC CRM is active so Create CRM Contact can appear in All Forms.
+	 *
+	 * @return bool
+	 */
+	public static function is_crm_plugin_active() {
+		if ( defined( 'PRC_CRM_FILE' ) ) {
+			return true;
+		}
+
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			if ( ! defined( 'ABSPATH' ) ) {
+				return false;
+			}
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		return is_plugin_active( 'prc-crm/prc-crm.php' );
 	}
 
 	/**

@@ -22,11 +22,12 @@ class Form_Responses_Assets {
 		$filter_options = ( new Form_Response_Repository() )->get_filter_options();
 
 		return array(
-			'nonce'           => wp_create_nonce( 'wp_rest' ),
-			'restUrl'         => esc_url_raw( rest_url() ),
-			'forms'           => self::get_forms_list(),
-			'statuses'        => $filter_options['statuses'],
-			'legacyFormNames' => $filter_options['legacy_form_names'],
+			'nonce'               => wp_create_nonce( 'wp_rest' ),
+			'restUrl'             => esc_url_raw( rest_url() ),
+			'forms'               => self::get_forms_list(),
+			'statuses'            => $filter_options['statuses'],
+			'legacyFormNames'     => $filter_options['legacy_form_names'],
+			'canCreateCrmContact' => Form_List::is_crm_plugin_active(),
 		);
 	}
 

@@ -72,8 +72,6 @@ class Form {
 				'<div data-wp-interactive="prc-block/form">%s</div>',
 				$block_content
 			);
-			// If New Relic is available, add a custom tracer or log a custom event for transaction tracing.
-			\PRC\Platform\Newrelic\trace( 'prc-block/form/handle_conditional_form_field_display', 'wrapped_interactive_block' );
 			// Reset the tag processor.
 			$tag = new WP_HTML_Tag_Processor( $content );
 			$tag->next_tag();
@@ -276,25 +274,6 @@ class Form {
 
 		// Rewind.
 		$tag->seek( 'form_start' );
-
-		// $button_text = null;
-
-		// while ( $tag->next_tag(
-		// array(
-		// 'tag_name' => 'button',
-		// )
-		// ) ) {
-		// if ( 'submit' === $tag->get_attribute( 'type' ) ) {
-		// $button_text = \PRC\Platform\Blocks\Core_Button::get_button_text( $content );
-		// $tag->set_attribute( 'data-wp-bind--disabled', 'prc-block/form::state.submissionDisabled' );
-		// if ( null !== $button_text ) {
-		// $tag->set_attribute( 'data-wp--text', 'prc-block/form::state.submitButtonText' );
-		// }
-		// }
-		// }
-
-		// // Rewind.
-		// $tag->seek( 'form_start' );
 
 		// Define the interactivity context.
 		$tag->set_attribute(

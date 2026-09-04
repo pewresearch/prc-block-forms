@@ -17,6 +17,7 @@ import {
 	notAllowed,
 	inbox,
 	drafts,
+	people,
 } from '@wordpress/icons';
 import { useState } from '@wordpress/element';
 
@@ -138,6 +139,7 @@ function DeleteResponseModal({ items, closeModal, onActionPerformed }) {
 			</Text>
 			<VStack spacing={2} direction="row" justify="flex-end">
 				<Button
+					__next40pxDefaultSize
 					variant="tertiary"
 					onClick={closeModal}
 					disabled={isDeleting}
@@ -145,6 +147,7 @@ function DeleteResponseModal({ items, closeModal, onActionPerformed }) {
 					{__('Cancel', 'prc-block-forms')}
 				</Button>
 				<Button
+					__next40pxDefaultSize
 					variant="primary"
 					isDestructive
 					onClick={handleConfirm}
@@ -232,6 +235,84 @@ async function setUnread(items, isUnread, refresh) {
 	refresh();
 }
 
+function canCreateCrmContact() {
+	return !!window?.prcFormResponses?.canCreateCrmContact;
+}
+
+function responseHasEmail(item) {
+	if (item?.email) {
+		return true;
+	}
+	return (item?.fields || []).some((field) => {
+		if ('email' === field?.type && field?.value) {
+			return true;
+		}
+		const haystack = `${field?.name || ''} ${field?.label || ''}`;
+		return /email/i.test(haystack) && !!field?.value;
+	});
+}
+
+async function createCrmContacts(items, refresh) {
+	const { createErrorNotice, createSuccessNotice } = dispatch(noticesStore);
+	try {
+		const result = await apiFetch({
+			path: '/prc-api/v3/crm/contacts/from-form-responses',
+			method: 'POST',
+			data: { ids: items.map((item) => item.id) },
+		});
+		const created = Number(result?.created) || 0;
+		const updated = Number(result?.updated) || 0;
+		const skipped = Array.isArray(result?.skipped) ? result.skipped : [];
+
+		if (created || updated) {
+			createSuccessNotice(
+				sprintf(
+					/* translators: 1: created count, 2: updated count */
+					__(
+						'%1$d contact(s) created, %2$d updated.',
+						'prc-block-forms'
+					),
+					created,
+					updated
+				),
+				{ type: 'snackbar' }
+			);
+		}
+
+		if (skipped.length) {
+			const first = skipped[0]?.message
+				? String(skipped[0].message)
+				: __(
+						'Some responses could not create a CRM contact.',
+						'prc-block-forms'
+					);
+			createErrorNotice(
+				1 === skipped.length
+					? first
+					: sprintf(
+							/* translators: 1: skip count, 2: first error */
+							__(
+								'%1$d response(s) skipped. %2$s',
+								'prc-block-forms'
+							),
+							skipped.length,
+							first
+						),
+				{ type: 'snackbar' }
+			);
+		}
+	} catch {
+		createErrorNotice(
+			__(
+				'Could not create CRM contacts from the selected response(s).',
+				'prc-block-forms'
+			),
+			{ type: 'snackbar' }
+		);
+	}
+	refresh();
+}
+
 export default function getActions(refresh) {
 	return [
 		{
@@ -252,6 +333,18 @@ export default function getActions(refresh) {
 			callback: (items) => {
 				exportResponsesToCsv(items);
 			},
+		},
+		{
+			id: 'create-crm-contact',
+			label: __('Create CRM Contact', 'prc-block-forms'),
+			icon: people,
+			supportsBulk: true,
+			isEligible: (item) =>
+				canCreateCrmContact() &&
+				!!item?.id &&
+				!item.isSpam &&
+				responseHasEmail(item),
+			callback: (items) => createCrmContacts(items, refresh),
 		},
 		{
 			id: 'mark-read',
