@@ -3,7 +3,7 @@
         'name' => 'pewresearch/prc-block-forms',
         'pretty_version' => 'dev-trunk',
         'version' => 'dev-trunk',
-        'reference' => '804ddde449658d8cb94e2325ff2a2de1d02e8bbf',
+        'reference' => '99299fc9b3d1ae208ec034696957dff31611d4cb',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'pewresearch/prc-block-forms' => array(
             'pretty_version' => 'dev-trunk',
             'version' => 'dev-trunk',
-            'reference' => '804ddde449658d8cb94e2325ff2a2de1d02e8bbf',
+            'reference' => '99299fc9b3d1ae208ec034696957dff31611d4cb',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
