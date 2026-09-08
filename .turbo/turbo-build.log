@@ -1,5 +1,5 @@
 
-> @prc/block-forms@1.2.0 build
+> @prc/block-forms@1.2.1 build
 > wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js && wp-scripts build --source-path=src/admin-dataview/ --output-path=build/admin-dataview/
 
 assets by chunk 10 KiB (id hint: style) 10 assets
@@ -32,7 +32,7 @@ built modules 5.25 KiB (css/mini-extract) 70 KiB (javascript) [1m[33m[built][
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.66 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 11570 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 2915 ms
 assets by chunk 10 KiB (id hint: style) 10 assets
 assets by path [1m[32msynced-form/[39m[22m 6 KiB 4 assets
 assets by chunk 3.79 KiB (name: form-message/index) 4 assets
@@ -63,7 +63,7 @@ built modules 5.25 KiB (css/mini-extract) 70 KiB (javascript) [1m[33m[built][
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.66 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 10185 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 2862 ms
 
 assets by path [1m[32mform/view/[39m[22m 10.9 KiB
   asset [1m[32mform/view/index.js[39m[22m 10.8 KiB [1m[32m[emitted][39m[22m [javascript module] [1m[32m[minimized][39m[22m (name: form/view/index)
@@ -77,14 +77,14 @@ orphan modules 10.1 KiB [1m[33m[orphan][39m[22m 5 modules
 built modules 34.2 KiB [1m[33m[built][39m[22m
   [1m./src/form/view/index.js + 5 modules[39m[22m 27.9 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1m./src/form-captcha/view.js + 1 modules[39m[22m 6.26 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 6992 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 2028 ms
 Block metadata PHP file generated at: build/blocks-manifest.php
-assets by chunk 352 KiB (name: index)
-  asset [1m[33mindex.js[39m[22m [1m[33m352 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
-  asset [1m[32mindex.asset.php[39m[22m 347 bytes [1m[32m[emitted][39m[22m (name: index)
-assets by path [1m[32m./*.css[39m[22m 173 KiB
-  asset [1m[32m./style-index-rtl.css[39m[22m 86.6 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
-  asset [1m[32m./style-index.css[39m[22m 86.6 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+assets by chunk 772 KiB (name: index)
+  asset [1m[33mindex.js[39m[22m [1m[33m771 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
+  asset [1m[32mindex.asset.php[39m[22m 331 bytes [1m[32m[emitted][39m[22m (name: index)
+assets by path [1m[32m./*.css[39m[22m 180 KiB
+  asset [1m[32m./style-index-rtl.css[39m[22m 89.8 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+  asset [1m[32m./style-index.css[39m[22m 89.8 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
 asset [1m[32mform/block.json[39m[22m 3.74 KiB [1m[32m[emitted][39m[22m [from: src/form/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-submit/block.json[39m[22m 1.55 KiB [1m[32m[emitted][39m[22m [from: src/form-submit/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-message/block.json[39m[22m 1.41 KiB [1m[32m[emitted][39m[22m [from: src/form-message/block.json] [1m[32m[copied][39m[22m
@@ -92,30 +92,30 @@ asset [1m[32mform-page/block.json[39m[22m 1.34 KiB [1m[32m[emitted][39m[
 asset [1m[32msynced-form/block.json[39m[22m 748 bytes [1m[32m[emitted][39m[22m [from: src/synced-form/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-captcha/block.json[39m[22m 731 bytes [1m[32m[emitted][39m[22m [from: src/form-captcha/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-message-bindings/block.json[39m[22m 254 bytes [1m[32m[emitted][39m[22m [from: src/form-message-bindings/block.json] [1m[32m[copied][39m[22m
-Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 525 KiB = [1m[32m./style-index.css[39m[22m 86.6 KiB [1m[32m./style-index-rtl.css[39m[22m 86.6 KiB [1m[32mindex.js[39m[22m 352 KiB [1m[32mindex.asset.php[39m[22m 347 bytes
-orphan modules 4.7 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 2255 modules
+Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 951 KiB = [1m[32m./style-index.css[39m[22m 89.8 KiB [1m[32m./style-index-rtl.css[39m[22m 89.8 KiB [1m[32mindex.js[39m[22m 771 KiB [1m[32mindex.asset.php[39m[22m 331 bytes
+orphan modules 7.96 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 3844 modules
 runtime modules 4.48 KiB 7 modules
-built modules 1.09 MiB (javascript) 86.6 KiB (css/mini-extract) [1m[33m[built][39m[22m
-  cacheable modules 13 KiB (javascript) 86.6 KiB (css/mini-extract)
+built modules 2.19 MiB (javascript) 89.8 KiB (css/mini-extract) [1m[33m[built][39m[22m
+  cacheable modules 13 KiB (javascript) 89.8 KiB (css/mini-extract)
     modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 5.03 KiB
       modules by path [1m../../node_modules/use-sync-external-store/shim/*.js[39m[22m 496 bytes 2 modules
       modules by path [1m../../node_modules/use-sync-external-store/cjs/[39m[22m 4.54 KiB
         [1m../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim...(truncated)[39m[22m 1.92 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
         [1m../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with...(truncated)[39m[22m 2.62 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 86.6 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 89.8 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/fast-deep-equal/es6/index.js[39m[22m 1.89 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  [1m./src/response-admin/index.js + 363 modules[39m[22m 1.08 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/response-admin/index.js + 738 modules[39m[22m 2.17 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
 
 [1m[33mWARNING[39m[22m in [1masset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
 This can impact web performance.
 Assets: 
-  index.js (352 KiB)[39m[22m
+  index.js (771 KiB)[39m[22m
 
 [1m[33mWARNING[39m[22m in [1mentrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
 Entrypoints:
-  index (525 KiB)
+  index (951 KiB)
       ./style-index.css
       ./style-index-rtl.css
       index.js
@@ -126,13 +126,13 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 35494 ms
-assets by chunk 353 KiB (name: index)
-  asset [1m[33mindex.js[39m[22m [1m[33m352 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
-  asset [1m[32mindex.asset.php[39m[22m 374 bytes [1m[32m[emitted][39m[22m (name: index)
-assets by path [1m[32m./*.css[39m[22m 173 KiB
-  asset [1m[32m./style-index-rtl.css[39m[22m 86.6 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
-  asset [1m[32m./style-index.css[39m[22m 86.6 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 15130 ms
+assets by chunk 772 KiB (name: index)
+  asset [1m[33mindex.js[39m[22m [1m[33m772 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
+  asset [1m[32mindex.asset.php[39m[22m 358 bytes [1m[32m[emitted][39m[22m (name: index)
+assets by path [1m[32m./*.css[39m[22m 180 KiB
+  asset [1m[32m./style-index-rtl.css[39m[22m 89.8 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+  asset [1m[32m./style-index.css[39m[22m 89.8 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
 asset [1m[32mform/block.json[39m[22m 3.74 KiB [1m[32m[emitted][39m[22m [from: src/form/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-submit/block.json[39m[22m 1.55 KiB [1m[32m[emitted][39m[22m [from: src/form-submit/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-message/block.json[39m[22m 1.41 KiB [1m[32m[emitted][39m[22m [from: src/form-message/block.json] [1m[32m[copied][39m[22m
@@ -140,30 +140,30 @@ asset [1m[32mform-page/block.json[39m[22m 1.34 KiB [1m[32m[emitted][39m[
 asset [1m[32msynced-form/block.json[39m[22m 748 bytes [1m[32m[emitted][39m[22m [from: src/synced-form/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-captcha/block.json[39m[22m 731 bytes [1m[32m[emitted][39m[22m [from: src/form-captcha/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-message-bindings/block.json[39m[22m 254 bytes [1m[32m[emitted][39m[22m [from: src/form-message-bindings/block.json] [1m[32m[copied][39m[22m
-Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 526 KiB = [1m[32m./style-index.css[39m[22m 86.6 KiB [1m[32m./style-index-rtl.css[39m[22m 86.6 KiB [1m[32mindex.js[39m[22m 352 KiB [1m[32mindex.asset.php[39m[22m 374 bytes
-orphan modules 4.7 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 2257 modules
+Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 952 KiB = [1m[32m./style-index.css[39m[22m 89.8 KiB [1m[32m./style-index-rtl.css[39m[22m 89.8 KiB [1m[32mindex.js[39m[22m 772 KiB [1m[32mindex.asset.php[39m[22m 358 bytes
+orphan modules 7.96 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 3846 modules
 runtime modules 4.48 KiB 7 modules
-built modules 1.09 MiB (javascript) 86.6 KiB (css/mini-extract) [1m[33m[built][39m[22m
-  cacheable modules 13 KiB (javascript) 86.6 KiB (css/mini-extract)
+built modules 2.19 MiB (javascript) 89.8 KiB (css/mini-extract) [1m[33m[built][39m[22m
+  cacheable modules 13 KiB (javascript) 89.8 KiB (css/mini-extract)
     modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 5.03 KiB
       modules by path [1m../../node_modules/use-sync-external-store/shim/*.js[39m[22m 496 bytes 2 modules
       modules by path [1m../../node_modules/use-sync-external-store/cjs/[39m[22m 4.54 KiB
         [1m../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim...(truncated)[39m[22m 1.92 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
         [1m../../node_modules/use-sync-external-store/cjs/use-sync-external-store-shim/with...(truncated)[39m[22m 2.62 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 86.6 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 89.8 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/fast-deep-equal/es6/index.js[39m[22m 1.89 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  [1m./src/form-responses-panel/index.jsx + 365 modules[39m[22m 1.08 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/form-responses-panel/index.jsx + 740 modules[39m[22m 2.17 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
 
 [1m[33mWARNING[39m[22m in [1masset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
 This can impact web performance.
 Assets: 
-  index.js (352 KiB)[39m[22m
+  index.js (772 KiB)[39m[22m
 
 [1m[33mWARNING[39m[22m in [1mentrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
 Entrypoints:
-  index (526 KiB)
+  index (952 KiB)
       ./style-index.css
       ./style-index-rtl.css
       index.js
@@ -174,38 +174,38 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 34536 ms
-assets by chunk 356 KiB (name: index)
-  asset [1m[33mindex.js[39m[22m [1m[33m356 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
-  asset [1m[32mindex.asset.php[39m[22m 359 bytes [1m[32m[emitted][39m[22m (name: index)
-assets by path [1m[32m./*.css[39m[22m 174 KiB
-  asset [1m[32m./style-index-rtl.css[39m[22m 86.9 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
-  asset [1m[32m./style-index.css[39m[22m 86.9 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
-Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 530 KiB = [1m[32m./style-index.css[39m[22m 86.9 KiB [1m[32m./style-index-rtl.css[39m[22m 86.9 KiB [1m[32mindex.js[39m[22m 356 KiB [1m[32mindex.asset.php[39m[22m 359 bytes
-orphan modules 4.71 MiB (javascript) 1.83 KiB (runtime) [1m[33m[orphan][39m[22m 2265 modules
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 8507 ms
+assets by chunk 776 KiB (name: index)
+  asset [1m[33mindex.js[39m[22m [1m[33m775 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
+  asset [1m[32mindex.asset.php[39m[22m 343 bytes [1m[32m[emitted][39m[22m (name: index)
+assets by path [1m[32m./*.css[39m[22m 180 KiB
+  asset [1m[32m./style-index-rtl.css[39m[22m 90.1 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+  asset [1m[32m./style-index.css[39m[22m 90.1 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
+Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 956 KiB = [1m[32m./style-index.css[39m[22m 90.1 KiB [1m[32m./style-index-rtl.css[39m[22m 90.1 KiB [1m[32mindex.js[39m[22m 775 KiB [1m[32mindex.asset.php[39m[22m 343 bytes
+orphan modules 7.97 MiB (javascript) 1.83 KiB (runtime) [1m[33m[orphan][39m[22m 3854 modules
 runtime modules 4.48 KiB 7 modules
-built modules 1.1 MiB (javascript) 86.9 KiB (css/mini-extract) [1m[33m[built][39m[22m
-  javascript modules 1.1 MiB
+built modules 2.19 MiB (javascript) 90.1 KiB (css/mini-extract) [1m[33m[built][39m[22m
+  javascript modules 2.19 MiB
     cacheable modules 13 KiB
       modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 5.03 KiB
         modules by path [1m../../node_modules/use-sync-external-store/shim/*.js[39m[22m 496 bytes 2 modules
         modules by path [1m../../node_modules/use-sync-external-store/cjs/[39m[22m 4.54 KiB 2 modules
       [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
       [1m../../node_modules/fast-deep-equal/es6/index.js[39m[22m 1.89 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    [1m./src/admin-dataview/index.jsx + 367 modules[39m[22m 1.08 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/admin-dataview/index.jsx + 742 modules[39m[22m 2.18 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  css modules 86.9 KiB
+  css modules 90.1 KiB
     css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/admin-dataview/style.scss[39m[22m 272 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 86.6 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 89.8 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
 
 [1m[33mWARNING[39m[22m in [1masset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
 This can impact web performance.
 Assets: 
-  index.js (356 KiB)[39m[22m
+  index.js (775 KiB)[39m[22m
 
 [1m[33mWARNING[39m[22m in [1mentrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
 Entrypoints:
-  index (530 KiB)
+  index (956 KiB)
       ./style-index.css
       ./style-index-rtl.css
       index.js
@@ -216,4 +216,4 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 34644 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 7364 ms
