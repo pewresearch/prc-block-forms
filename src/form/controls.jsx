@@ -151,15 +151,15 @@ export default function Controls({
 	const { rootBlockNamespace } = useSelect(
 		(select) => {
 			const { interactiveNamespace } = attributes;
-			const { getBlockRootClientId, getBlock } =
-				select('core/block-editor');
-			const rootClientId = getBlockRootClientId(clientId);
-			const rootBlock = getBlock(rootClientId);
 			if (interactiveNamespace && interactiveNamespace.length > 0) {
 				return {
 					rootBlockNamespace: interactiveNamespace,
 				};
 			}
+			const { getBlockRootClientId, getBlock } =
+				select('core/block-editor');
+			const rootClientId = getBlockRootClientId(clientId);
+			const rootBlock = getBlock(rootClientId);
 			return {
 				rootBlockNamespace:
 					!rootBlock || rootBlock?.name === 'core/post-content'
@@ -290,11 +290,7 @@ export default function Controls({
 				<BlockControls group="block">
 					<ToolbarButton
 						icon={() => (
-							<Icon
-								icon="message-smile"
-								library="solid"
-								size="14px"
-							/>
+							<Icon icon="comment" library="prc" size="14px" />
 						)}
 						label={
 							displayMessageEditing
@@ -311,12 +307,14 @@ export default function Controls({
 			<InspectorControls>
 				<PanelBody title={__('Form Settings')}>
 					<TextControl
+						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={__('Form Name')}
 						value={_formName}
 						onChange={(value) => setFormName(value)}
 					/>
 					<SelectControl
+						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={__('Action', 'form')}
 						options={actionOptions}
@@ -326,6 +324,7 @@ export default function Controls({
 					/>
 					{hasMessageBlock && (
 						<Button
+							__next40pxDefaultSize
 							variant="secondary"
 							onClick={() =>
 								setDisplayMessageEditing(!displayMessageEditing)
@@ -347,12 +346,13 @@ export default function Controls({
 						>
 							<p>
 								This form includes a default template. To use a
-								different set of blocks, click "Start from
-								scratch." If you prefer to use the template,
-								click "Use template."
+								different set of blocks, click &ldquo;Start from
+								scratch.&rdquo; If you prefer to use the
+								template, click &ldquo;Use template.&rdquo;
 							</p>
 							<div style={{ display: 'flex', gap: '10px' }}>
 								<Button
+									__next40pxDefaultSize
 									variant="primary"
 									onClick={() => {
 										setIsTemplateDialogOpen(false);
@@ -368,6 +368,7 @@ export default function Controls({
 									Use template
 								</Button>
 								<Button
+									__next40pxDefaultSize
 									variant="secondary"
 									onClick={() => {
 										setIsTemplateDialogOpen(false);
@@ -376,6 +377,7 @@ export default function Controls({
 									Use existing blocks
 								</Button>
 								<Button
+									__next40pxDefaultSize
 									variant="tertiary"
 									onClick={() => {
 										setIsTemplateDialogOpen(false);

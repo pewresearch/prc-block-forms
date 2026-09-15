@@ -1,8 +1,8 @@
 /**
- * External Dependencies
+ * WordPress Dependencies
  */
-import { Icon } from '@prc/icons';
+import { Icon, page } from '@wordpress/icons';
 
 export default function () {
-	return <Icon icon="page" library="light" />;
+	return <Icon icon={page} />;
 }
