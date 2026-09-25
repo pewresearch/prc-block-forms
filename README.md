@@ -3,7 +3,7 @@
 Forms management for the PRC Platform:
 
 - **`form` custom post type** — reusable, block-composed form definitions
-- **Form blocks** — `prc-block/form`, `form-page`, `form-submit`, `form-message`, `form-captcha`, `form-message-bindings` (form-input-* blocks remain in `@prc/block-library`)
+- **Form blocks** — `prc-block/form`, `form-page`, `form-submit`, `form-message`, `form-captcha`, `form-message-bindings` (form-input-\* blocks remain in `@prc/block-library`)
 - **`prc-block/synced-form` block** — embed a saved form anywhere on the site
 - **`prc-block-library/forms` data store** — form action registry consumed by the form block editor and downstream plugins
 - **`Form_Renderer` PHP utility** — render a form CPT post by ID or slug from PHP (used by Content Gate, account pages, and other plugins)
@@ -11,26 +11,26 @@ Forms management for the PRC Platform:
 - **Forms library** — **All Forms** runs on the shared `prc-wp-admin-dataview` shell; the provider lives in `src/admin-dataview/`
 - **Abilities API** — Jetpack-shaped `prc-block-forms/*` tools for VIP MCP; Jetpack `jetpack-forms/*` abilities are suppressed. Full ability list and unread/spam semantics: [`docs/abilities.md`](../../docs/plugins/prc-block-forms/abilities.md).
 - **REST submission handlers** — `sendToEmail` and `logResponse` actions consumed by `prc-block/form`
-- **Sample forms** — optional Forms CPT seeds (e.g. **Speaker Request (Sample)** at slug `speaker-request`) provisioned idempotently on `init` via `Form_Sample_Provisioner`; markup lives in `patterns/`
+- **Sample forms** — optional Forms CPT seeds (e.g. **Speaker Request (Sample)** at slug `speaker-request`) seeded once per site on first `init` via `Form_Sample_Provisioner` (deleted samples are not recreated); markup lives in `patterns/`
 
 ## Form blocks
 
-| Block | Doc |
-| --- | --- |
-| `prc-block/form` | [`docs/blocks/form.md`](../../docs/plugins/prc-block-forms/blocks/form.md) |
-| `prc-block/synced-form` | [`docs/blocks/synced-form.md`](../../docs/plugins/prc-block-forms/blocks/synced-form.md) |
-| `prc-block/form-page` | [`docs/blocks/form-page.md`](../../docs/plugins/prc-block-forms/blocks/form-page.md) |
-| `prc-block/form-submit` | [`docs/blocks/form-submit.md`](../../docs/plugins/prc-block-forms/blocks/form-submit.md) |
-| `prc-block/form-message` | [`docs/blocks/form-message.md`](../../docs/plugins/prc-block-forms/blocks/form-message.md) |
-| `prc-block/form-captcha` | [`docs/blocks/form-captcha.md`](../../docs/plugins/prc-block-forms/blocks/form-captcha.md) |
-| `prc-block/form-message-bindings` | Editor-only binding registration companion |
+| Block                             | Doc                                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
+| `prc-block/form`                  | [`docs/blocks/form.md`](../../docs/plugins/prc-block-forms/blocks/form.md)                 |
+| `prc-block/synced-form`           | [`docs/blocks/synced-form.md`](../../docs/plugins/prc-block-forms/blocks/synced-form.md)   |
+| `prc-block/form-page`             | [`docs/blocks/form-page.md`](../../docs/plugins/prc-block-forms/blocks/form-page.md)       |
+| `prc-block/form-submit`           | [`docs/blocks/form-submit.md`](../../docs/plugins/prc-block-forms/blocks/form-submit.md)   |
+| `prc-block/form-message`          | [`docs/blocks/form-message.md`](../../docs/plugins/prc-block-forms/blocks/form-message.md) |
+| `prc-block/form-captcha`          | [`docs/blocks/form-captcha.md`](../../docs/plugins/prc-block-forms/blocks/form-captcha.md) |
+| `prc-block/form-message-bindings` | Editor-only binding registration companion                                                 |
 
 ## Sample forms
 
 On first run (and on self-heal when the seed version bumps), `@prc/block-forms` creates editable sample form posts editors can duplicate or embed with the Synced Form block:
 
-| Slug | Title | Pattern file |
-| --- | --- | --- |
+| Slug              | Title                    | Pattern file                        |
+| ----------------- | ------------------------ | ----------------------------------- |
 | `speaker-request` | Speaker Request (Sample) | `patterns/speaker-request-form.php` |
 
 Sample forms are deletable — they are onboarding starters, not runtime dependencies. Update the form's **Redirect Target** (recipient email for `sendToEmail`) before going live.
