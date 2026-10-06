@@ -40,6 +40,7 @@ class Forms {
 
 		$loader->add_action( 'init', $this, 'register_post_type' );
 		$loader->add_action( 'admin_init', $this, 'maybe_upgrade_responses_table' );
+		$loader->add_filter( 'prc_wp_entity_search_posts_query', $this, 'use_mysql_for_form_entity_search', 10, 1 );
 
 		new Form_Response_Retention( $loader );
 		new Form_Responses_REST_Controller( $loader );
@@ -136,5 +137,33 @@ class Forms {
 	 */
 	public function maybe_upgrade_responses_table() {
 		( new Form_Response_Schema() )->maybe_upgrade_table();
+	}
+
+	/**
+	 * Search `form` posts with MySQL instead of ElasticPress.
+	 *
+	 * The `form` post type is not public and is excluded from search, so it is
+	 * not indexed. prc-elasticpress forces `ep_integrate` on REST searches, which
+	 * would return zero hits for the Synced Form block search.
+	 *
+	 * @hook prc_wp_entity_search_posts_query
+	 *
+	 * @param array $query_args WP_Query args from WPEntitySearch.
+	 * @return array
+	 */
+	public function use_mysql_for_form_entity_search( $query_args ) {
+		if ( ! is_array( $query_args ) || ! isset( $query_args['post_type'] ) ) {
+			return $query_args;
+		}
+
+		$post_types = array_values( array_unique( (array) $query_args['post_type'] ) );
+		if ( array( self::POST_TYPE ) !== $post_types ) {
+			return $query_args;
+		}
+
+		$query_args['ep_integrate'] = false;
+		unset( $query_args['es'] );
+
+		return $query_args;
 	}
 }

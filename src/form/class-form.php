@@ -275,6 +275,12 @@ class Form {
 		// Rewind.
 		$tag->seek( 'form_start' );
 
+		// Hidden pages hold invalid controls the browser cannot focus, which
+		// cancels the submit event. The view script validates one page at a time.
+		if ( ! empty( $form_pages ) ) {
+			$tag->set_attribute( 'novalidate', true );
+		}
+
 		// Define the interactivity context.
 		$tag->set_attribute(
 			'data-wp-context',

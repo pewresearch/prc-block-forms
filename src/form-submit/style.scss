@@ -7,6 +7,9 @@
 		mark {
 			display: none;
 		}
+		.wp-block-prc-block-form-submit__page-nav {
+			display: none;
+		}
 	}
 	&.captcha-hidden {
 		.wp-block-prc-block-form-submit__captcha {
@@ -16,11 +19,73 @@
 		mark {
 			display: unset;
 		}
+		// Outranks the broad `button { display: unset; }` above so the links
+		// keep their icon + label on one row.
+		.wp-block-prc-block-form-submit__page-nav {
+			display: flex;
+			&[hidden] {
+				display: none;
+			}
+			button {
+				display: inline-flex;
+				&[hidden] {
+					display: none;
+				}
+			}
+		}
 	}
 	button {
 		&[disabled] {
 			opacity: 0.5;
 			cursor: not-allowed;
+		}
+	}
+}
+
+// Shared by the frontend and the editor preview.
+.wp-block-prc-block-form-submit__page-nav {
+	align-items: flex-start;
+	display: flex;
+	flex-basis: 100%;
+	flex-direction: column;
+	gap: 0.25em;
+	margin-block-start: 0.75em;
+
+	.wp-block-prc-block-form-submit__page-nav-link {
+		align-items: center;
+		background: none;
+		display: inline-flex;
+		border: 0;
+		box-shadow: none;
+		color: inherit;
+		cursor: pointer;
+		font-family: inherit;
+		font-size: 0.8125em;
+		font-weight: 400;
+		gap: 0.4em;
+		line-height: 1.4;
+		min-height: 0;
+		opacity: 0.65;
+		padding: 0;
+		text-align: left;
+		text-decoration: underline;
+		text-transform: none;
+		transition: opacity 150ms ease-out;
+
+		&:hover,
+		&:focus-visible {
+			opacity: 1;
+		}
+
+		.wp-block-prc-block-form-submit__page-nav-icon {
+			display: inline-flex;
+			flex-shrink: 0;
+
+			svg {
+				fill: currentColor;
+				height: 0.75em;
+				width: 0.75em;
+			}
 		}
 	}
 }

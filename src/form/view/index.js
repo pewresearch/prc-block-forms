@@ -12,6 +12,7 @@ import {
 import subscribe from './subscribe';
 import { FormPersistence } from './persistence';
 import { sendSubmission } from './submit';
+import { savePristineFormFields, stepPaginatedForm } from './page-navigation';
 
 const collectFormFields = (ref) => {
 	// find all the input elements in the ref that have a class name that contains at least 'wp-block-prc-block-form-input-*'
@@ -319,11 +320,23 @@ const { state, actions } = store('prc-block/form', {
 		checkForRequiredFieldsWithoutValues: () => {
 			const context = getContext();
 			const { fieldsForSubmission } = state;
+			const { ref: formEl } = getElement();
 			// Check if any of the formFieldsToSubmit are required and if they don't have a value, then set the error on their state to be true.
 			let stopProcessing = false;
 			fieldsForSubmission.forEach((field) => {
+				// Fields hidden by a display condition can't be filled in, so
+				// they don't count as required. Inactive form pages still do.
+				const hiddenAncestor = formEl
+					?.querySelector(`#${window.CSS.escape(field.id)}`)
+					?.closest('[hidden]');
+				const isConditionallyHidden =
+					!!hiddenAncestor &&
+					!hiddenAncestor.classList.contains(
+						'wp-block-prc-block-form-page'
+					);
 				if (
 					field.required &&
+					!isConditionallyHidden &&
 					(field.type === 'checkbox' || field.type === 'radio'
 						? !field.checked
 						: !field.value)
@@ -347,24 +360,10 @@ const { state, actions } = store('prc-block/form', {
 		onSubmit: withSyncEvent(async (event) => {
 			event.preventDefault();
 			const context = getContext();
-			const { formPages, activePage } = context;
-			if (formPages && formPages.length > 0) {
-				// If there are form pages, then we need to check if we're on the last page.
-				const currentPageIndex = formPages.findIndex(
-					(pageId) => pageId === activePage
-				);
-				if (currentPageIndex < formPages.length - 1) {
-					// Not on the last page, so go to the next page.
-					context.activePage = formPages[currentPageIndex + 1];
-					getElement().ref?.dispatchEvent(
-						new CustomEvent('prc-form/submitted', {
-							bubbles: true,
-							detail: { success: false, aborted: true },
-						})
-					);
-					return;
-				}
-				// If we're here, then we're on the last page and can continue with submission.
+			// Paginated forms validate and advance one page at a time; only the
+			// last, valid page falls through to submission.
+			if (stepPaginatedForm(context, getElement().ref)) {
+				return;
 			}
 
 			if (context.submissionProcessing) {
@@ -518,6 +517,7 @@ const { state, actions } = store('prc-block/form', {
 			const context = getContext();
 			context.formId = id;
 			context.formFields = formFields;
+			savePristineFormFields(id, formFields, state.formFields);
 			// Clear any expired form data from localStorage
 			FormPersistence.clearExpiredData();
 			// Load saved form data if it exists

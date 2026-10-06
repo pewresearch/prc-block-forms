@@ -39,6 +39,52 @@ class Form_Submit {
 	}
 
 	/**
+	 * Text-link navigation shown under the submit button on paginated forms.
+	 *
+	 * Pagination is only known once the parent `prc-block/form` block has
+	 * scanned its inner content for page blocks, which happens after this block
+	 * renders. The links are therefore always emitted and the store hides them
+	 * when `context.formPages` holds fewer than two pages.
+	 *
+	 * @return string
+	 */
+	private function render_page_navigation() {
+		$links = array(
+			array(
+				'class'  => 'is-previous-page',
+				'icon'   => 'angle-left',
+				'label'  => __( 'Go back to previous question', 'prc-block-forms' ),
+				'action' => 'prc-block/form::actions.onPreviousPageClick',
+				'hidden' => 'prc-block/form::state.isPreviousPageHidden',
+			),
+			array(
+				'class'  => 'is-reset',
+				'icon'   => 'arrow-rotate-left',
+				'label'  => __( 'Reset', 'prc-block-forms' ),
+				'action' => 'prc-block/form::actions.onResetFormClick',
+				'hidden' => false,
+			),
+		);
+
+		$buttons = '';
+		foreach ( $links as $link ) {
+			$buttons .= wp_sprintf(
+				'<button type="button" class="wp-block-prc-block-form-submit__page-nav-link %1$s" data-wp-on--click="%2$s"%3$s><span class="wp-block-prc-block-form-submit__page-nav-icon" aria-hidden="true">%4$s</span><span>%5$s</span></button>',
+				esc_attr( $link['class'] ),
+				esc_attr( $link['action'] ),
+				$link['hidden'] ? ' data-wp-bind--hidden="' . esc_attr( $link['hidden'] ) . '"' : '',
+				\PRC\Platform\Icons\get_icon_as_svg( 'prc', $link['icon'] ),
+				esc_html( $link['label'] )
+			);
+		}
+
+		return wp_sprintf(
+			'<div class="wp-block-prc-block-form-submit__page-nav" data-wp-bind--hidden="prc-block/form::state.isPageNavigationHidden">%s</div>',
+			$buttons
+		);
+	}
+
+	/**
 	 * Add directives to submit button, and other needed elements in inner blocks
 	 *
 	 * @param array  $attributes Attributes.
@@ -78,7 +124,7 @@ class Form_Submit {
 			)
 		);
 
-		return wp_sprintf( '<div %s>%s</div>', $block_wrapper_attrs, $content );
+		return wp_sprintf( '<div %s>%s%s</div>', $block_wrapper_attrs, $content, $this->render_page_navigation() );
 	}
 
 	/**
