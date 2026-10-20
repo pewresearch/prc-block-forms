@@ -256,9 +256,9 @@ class Form {
 		$tag->set_attribute( 'data-wp-class--has-errors', 'state.hasErrors' );
 		$tag->set_attribute( 'data-wp-class--is-displaying-form-message', 'state.formMessage' );
 		$tag->set_attribute( 'data-wp-class--is-processing', 'context.submissionProcessing' );
-		$tag->set_attribute( 'data-wp-watch--onCaptchaPassing', 'callbacks.onCaptchaPassing' );
-		$tag->set_attribute( 'data-wp-watch--sendSubmission', 'callbacks.sendSubmission' );
-		$tag->set_attribute( 'data-wp-watch--onProcessing', 'callbacks.onProcessing' );
+		$tag->set_attribute( 'data-wp-watch---onCaptchaPassing', 'callbacks.onCaptchaPassing' );
+		$tag->set_attribute( 'data-wp-watch---sendSubmission', 'callbacks.sendSubmission' );
+		$tag->set_attribute( 'data-wp-watch---onProcessing', 'callbacks.onProcessing' );
 
 		// Rewind.
 		$tag->set_bookmark( 'form_start' );

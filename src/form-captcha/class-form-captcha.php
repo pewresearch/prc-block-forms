@@ -54,14 +54,14 @@ class Form_Captcha {
 		$target_store        = $target_namespace . '::';
 		$block_wrapper_attrs = get_block_wrapper_attributes(
 			array(
-				'data-wp-interactive'             => 'prc-block/form-captcha',
-				'data-wp-context'                 => wp_json_encode(
+				'data-wp-interactive'              => 'prc-block/form-captcha',
+				'data-wp-context'                  => wp_json_encode(
 					array(
 						'targetNamespace' => $target_namespace,
 					)
 				),
-				'data-wp-watch--onDisplayCaptcha' => 'callbacks.onDisplayCaptcha',
-				'data-wp-bind--hidden'            => $target_store . 'context.captchaHidden',
+				'data-wp-watch---onDisplayCaptcha' => 'callbacks.onDisplayCaptcha',
+				'data-wp-bind--hidden'             => $target_store . 'context.captchaHidden',
 			)
 		);
 
