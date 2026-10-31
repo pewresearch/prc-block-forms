@@ -35,7 +35,7 @@ built modules 7.07 KiB (css/mini-extract) 73.7 KiB (javascript) [1m[33m[built]
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.65 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 10437 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 11679 ms
 Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
@@ -69,7 +69,7 @@ built modules 7.07 KiB (css/mini-extract) 73.7 KiB (javascript) [1m[33m[built]
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.65 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 12826 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 10764 ms
 
 assets by path [1m[32mform/view/[39m[22m 13 KiB
   asset [1m[32mform/view/index.js[39m[22m 12.9 KiB [1m[32m[emitted][39m[22m [javascript module] [1m[32m[minimized][39m[22m (name: form/view/index)
@@ -83,7 +83,7 @@ orphan modules 17.2 KiB [1m[33m[orphan][39m[22m 6 modules
 built modules 41.3 KiB [1m[33m[built][39m[22m
   [1m./src/form/view/index.js + 6 modules[39m[22m 35 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1m./src/form-captcha/view.js + 1 modules[39m[22m 6.26 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 8610 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 7299 ms
 Block metadata PHP file generated at: build/blocks-manifest.php
 Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
   npx update-browserslist-db@latest
@@ -135,7 +135,7 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 53775 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 51289 ms
 Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
@@ -186,7 +186,7 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 30632 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 59463 ms
 Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
@@ -231,4 +231,4 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 20349 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 40196 ms

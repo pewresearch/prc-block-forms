@@ -73,4 +73,4 @@ npx turbo build --filter=@prc/block-forms
 
 ## Dependencies
 
-- Requires `prc-scripts` and should load before `@prc/block-library` (see `client-mu-plugins/plugin-loader.php`). Consumer plugins that register form actions (`prc-user-accounts`, `prc-email-builder`, `prc-user-surveys`, `prc-quiz-builder`) declare `prc-block-forms` in `Requires Plugins`.
+- Requires `prc-shared` and should load before `@prc/block-library` (see `client-mu-plugins/plugin-loader.php`). Consumer plugins that register form actions (`prc-user-accounts`, `prc-email-builder`, `prc-user-surveys`, `prc-quiz-builder`) declare `prc-block-forms` in `Requires Plugins`.
