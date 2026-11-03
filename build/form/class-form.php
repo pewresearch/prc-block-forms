@@ -238,6 +238,17 @@ class Form {
 			}
 		}
 
+		/**
+		 * Filter a form's actionConfig before it is exposed to the view script.
+		 * Action handlers use it to sign authored values the submit handler must
+		 * not take from the client.
+		 *
+		 * @param array          $action_config Action config.
+		 * @param string         $form_action   Form action name.
+		 * @param \WP_Block|null $block         Form block instance.
+		 */
+		$action_config = (array) apply_filters( 'prc_block_form_action_config', $action_config, $form_action, $block );
+
 		$tag = new \WP_HTML_Tag_Processor( $content );
 		$tag->next_tag( 'form' );
 
