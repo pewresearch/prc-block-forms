@@ -11,6 +11,7 @@ The form block supports two different submission methods: **API** and **REST**. 
 The API method uses WordPress Interactivity API stores to handle form submissions client-side. This method is ideal for complex interactive forms that need immediate feedback or client-side processing.
 
 **How it works:**
+
 - Form submission is handled by actions in an interactivity store
 - The store namespace must match the form's namespace
 - Actions are called directly from the client-side JavaScript
@@ -19,52 +20,54 @@ The API method uses WordPress Interactivity API stores to handle form submission
 **Implementation Requirements:**
 
 1. **Register an Interactivity Store** with actions:
+
 ```js
 import { store } from '@wordpress/interactivity';
 
 const { actions } = store('my-plugin/namespace', {
-  actions: {
-    async myAction(formFields) {
-      // Handle form submission logic here
-      // formFields is an array of field objects with id, name, type, value, required, checked properties
-      
-      try {
-        // Process the form data
-        const result = await processFormData(formFields);
-        
-        // Return success response
-        return {
-          status: 'success',
-          message: 'Form submitted successfully!',
-          data: result,
-          actionUrl: null // Optional redirect URL
-        };
-      } catch (error) {
-        // Return error response
-        return {
-          status: 'error',
-          message: error.message,
-          actionUrl: null
-        };
-      }
-    }
-  }
+	actions: {
+		async myAction(formFields) {
+			// Handle form submission logic here
+			// formFields is an array of field objects with id, name, type, value, required, checked properties
+
+			try {
+				// Process the form data
+				const result = await processFormData(formFields);
+
+				// Return success response
+				return {
+					status: 'success',
+					message: 'Form submitted successfully!',
+					data: result,
+					actionUrl: null, // Optional redirect URL
+				};
+			} catch (error) {
+				// Return error response
+				return {
+					status: 'error',
+					message: error.message,
+					actionUrl: null,
+				};
+			}
+		},
+	},
 });
 ```
 
 2. **Register the form** with the API method:
+
 ```js
 import { dispatch } from '@wordpress/data';
 
 dispatch('prc-block-library/forms').registerForm({
-  label: 'My Custom Form',
-  description: 'A description of my form',
-  namespace: 'my-plugin/namespace',
-  action: 'myAction',
-  method: 'api',
-  template: [
-    // ...block template array
-  ],
+	label: 'My Custom Form',
+	description: 'A description of my form',
+	namespace: 'my-plugin/namespace',
+	action: 'myAction',
+	method: 'api',
+	template: [
+		// ...block template array
+	],
 });
 ```
 
@@ -73,6 +76,7 @@ dispatch('prc-block-library/forms').registerForm({
 The REST method uses WordPress REST API endpoints to handle form submissions server-side. This method is ideal for traditional form processing, email sending, database operations, and server-side validation.
 
 **How it works:**
+
 - Form submission sends data to a REST API endpoint
 - Server-side PHP handles the processing
 - Can integrate with WordPress functions, databases, email systems
@@ -81,6 +85,7 @@ The REST method uses WordPress REST API endpoints to handle form submissions ser
 **Implementation Requirements:**
 
 1. **Register REST Endpoints** in PHP:
+
 ```php
 class My_Form_Handler {
     public function __construct($loader) {
@@ -133,22 +138,24 @@ class My_Form_Handler {
 ```
 
 2. **Register the form** with the REST method:
+
 ```js
 import { dispatch } from '@wordpress/data';
 
 dispatch('prc-block-library/forms').registerForm({
-  label: 'My REST Form',
-  description: 'A form that submits via REST API',
-  namespace: 'my-plugin/namespace',
-  action: 'myAction', // Will be converted to 'my-action' for the REST endpoint
-  method: 'rest',
-  template: [
-    // ...block template array
-  ],
+	label: 'My REST Form',
+	description: 'A form that submits via REST API',
+	namespace: 'my-plugin/namespace',
+	action: 'myAction', // Will be converted to 'my-action' for the REST endpoint
+	method: 'rest',
+	template: [
+		// ...block template array
+	],
 });
 ```
 
 **Important Notes for REST Method:**
+
 - Action names are automatically converted from camelCase to hyphenated form (e.g., `sendToEmail` becomes `send-to-email`)
 - REST endpoints are accessible at `/wp-json/prc-api/v3/form/{action-name}`
 - **Public forms on edge-cached pages** do not rely on page-baked `wp_rest` nonces — they expire under VIP cache. Use Turnstile captcha (`prc-block/form-captcha`) and server-side rate limiting instead. The client may still send a `nonceToken` field for backward compatibility; handlers should not treat it as authoritative on public routes.
@@ -192,20 +199,20 @@ To register a form, dispatch the `registerForm` action to the `prc-block-library
 import { dispatch } from '@wordpress/data';
 
 dispatch('prc-block-library/forms').registerForm({
-  label: 'My Custom Form',
-  description: 'A description of my form',
-  namespace: 'my-plugin/namespace',
-  action: 'my-action',
-  method: 'api', // or 'rest'
-  template: [
-    // ...block template innerblocks array
-  ],
-  // Optional per-action configuration shown in the form block inspector:
-  configDefaults: {
-    segmentId: '',
-  },
-  ConfigComponent: MyActionConfigComponent, // ({ config, setConfig, configDefaults }) => ...
-  hidden: false, // Set true to hide from the action picker (e.g. deprecated registrations)
+	label: 'My Custom Form',
+	description: 'A description of my form',
+	namespace: 'my-plugin/namespace',
+	action: 'my-action',
+	method: 'api', // or 'rest'
+	template: [
+		// ...block template innerblocks array
+	],
+	// Optional per-action configuration shown in the form block inspector:
+	configDefaults: {
+		segmentId: '',
+	},
+	ConfigComponent: MyActionConfigComponent, // ({ config, setConfig, configDefaults }) => ...
+	hidden: false, // Set true to hide from the action picker (e.g. deprecated registrations)
 });
 ```
 
@@ -219,8 +226,8 @@ To retrieve all registered forms, use the selector in your component:
 import { useSelect } from '@wordpress/data';
 
 const forms = useSelect(
-  (select) => select('prc-block-library/forms').getForms(),
-  []
+	(select) => select('prc-block-library/forms').getForms(),
+	[]
 );
 ```
 
@@ -230,26 +237,27 @@ This will return an array of all forms registered with the store.
 
 Registry entries may declare action-specific settings rendered in the form block inspector:
 
-| Key | Type | Description |
-| --- | --- | --- |
-| `configDefaults` | `object` | Default values stored on the form block's `actionConfig` attribute |
-| `ConfigComponent` | `React component` | Custom inspector UI receiving `{ config, setConfig, configDefaults }`. Falls back to a generic `TextControl` per key when omitted |
-| `supportsRedirect` | `boolean` | When `true`, renders a shared "Redirect URL" field (`actionConfig.redirectUrl`) for post-submit navigation on API actions |
-| `hidden` | `boolean` | When `true`, excluded from the action picker unless it matches the form's current action (for deprecated registrations) |
+| Key                | Type              | Description                                                                                                                       |
+| ------------------ | ----------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `configDefaults`   | `object`          | Default values stored on the form block's `actionConfig` attribute                                                                |
+| `ConfigComponent`  | `React component` | Custom inspector UI receiving `{ config, setConfig, configDefaults }`. Falls back to a generic `TextControl` per key when omitted |
+| `supportsRedirect` | `boolean`         | When `true`, renders a shared "Redirect URL" field (`actionConfig.redirectUrl`) for post-submit navigation on API actions         |
+| `hidden`           | `boolean`         | When `true`, excluded from the action picker unless it matches the form's current action (for deprecated registrations)           |
 
 Configured values are serialized into `actionConfig` on the block and passed to the frontend via `data-wp-context`. REST handlers receive `actionConfig` in the POST body; API actions read `actionConfig.redirectUrl` for optional post-submit redirects.
 
 **Common config keys by action:**
 
-| Action | Config key | Purpose |
-| --- | --- | --- |
-| `sendToEmail` | `forwardTo` | Recipient email address |
-| `sendSystemEmail` | `originUrl` | Submission origin URL for Mailchimp merge fields |
-| `subscribe` | `interest` | Single Mailchimp segment ID |
-| `subscribeSelect` | `interests` | Offered Mailchimp segments (checkbox inner blocks) |
-| Actions with `supportsRedirect` | `redirectUrl` | Post-submit redirect URL |
+| Action                          | Config key    | Purpose                                            |
+| ------------------------------- | ------------- | -------------------------------------------------- |
+| `sendToEmail`                   | `forwardTo`   | Recipient email address                            |
+| `sendSystemEmail`               | `originUrl`   | Submission origin URL for Mailchimp merge fields   |
+| `subscribe`                     | `interest`    | Single Mailchimp segment ID                        |
+| `subscribeSelect`               | `interests`   | Offered Mailchimp segments (checkbox inner blocks) |
+| Actions with `supportsRedirect` | `redirectUrl` | Post-submit redirect URL                           |
 
 ### Notes
+
 - Ensure the store is imported/registered before any forms are registered (typically by importing `src/form/store.js` in your entry point).
 - The old `addFilter('prc-block-forms', ...)` and `applyFilters('prc-block-forms', [])` methods are no longer supported.
 - Each form should have a unique combination of `namespace` and `action`.
@@ -272,12 +280,12 @@ Form submissions are logged server-side to a custom `{$wpdb->prefix}prc_form_res
 
 Actions that log:
 
-| Action | Handler | Statuses |
-| --- | --- | --- |
-| `sendToEmail` | `plugins/prc-block-forms/includes/class-form-send-email.php` | `sent`, `send_failed` |
-| `logResponse` | `plugins/prc-block-forms/includes/class-form-response-log.php` | `received` |
-| `sendSystemEmail` | prc-email-builder `Form_Send_System_Email` | `sent`, `send_failed` (dry runs never log; Mailchimp opt-in outcome recorded as a `newsletter_signup_result` field) |
-| `subscribe` | prc-mailchimp mu-plugin via `prc-block/form` (`subscribe` action), deprecated `mailchimp-form`, and deprecated `mailchimp-select` blocks | `subscribed`, `subscribe_failed` (flat envelope — always logs by form name, no form CPT ID) |
+| Action            | Handler                                                                                                                                  | Statuses                                                                                                                                                               |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sendToEmail`     | `plugins/prc-block-forms/includes/class-form-send-email.php`                                                                             | `sent`, `send_failed`                                                                                                                                                  |
+| `logResponse`     | `plugins/prc-block-forms/includes/class-form-response-log.php`                                                                           | `received`                                                                                                                                                             |
+| `sendSystemEmail` | prc-email-builder `Form_Send_System_Email`                                                                                               | `sent`, `send_failed`, `send_blocked_non_production` (outside production; dry runs never log; Mailchimp opt-in outcome recorded as a `newsletter_signup_result` field) |
+| `subscribe`       | prc-mailchimp mu-plugin via `prc-block/form` (`subscribe` action), deprecated `mailchimp-form`, and deprecated `mailchimp-select` blocks | `subscribed`, `subscribe_failed` (flat envelope — always logs by form name, no form CPT ID)                                                                            |
 
 Deliberately excluded: `sendSurvey` (prc-user-surveys has its own persistence), `createGroup`/`createGroupFromResults` (quiz groups are first-class entities), and `deleteUser` (logging erasure requests would retain PII against the requester's intent).
 
