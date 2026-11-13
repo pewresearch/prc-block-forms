@@ -32,17 +32,23 @@ class Form_Response_Schema {
 	/**
 	 * Current responses table schema version.
 	 *
-	 * v2: added `is_spam` flag + (is_spam, created_at) index for spam foldering.
-	 * v3: added `is_unread` flag + (is_unread, created_at) index for read/unread.
+	 * Version 2 added the `is_spam` flag and the (is_spam, created_at) index for spam foldering.
+	 * Version 3 added the `is_unread` flag and the (is_unread, created_at) index for read/unread.
 	 */
 	const SCHEMA_VERSION = '3';
 
 	/**
 	 * Ensures the responses table matches the current schema version.
+	 *
+	 * The version option alone cannot tell that the table is gone: a database
+	 * sync can copy the option without the table. A failed insert calls this
+	 * with `$force` to run the install anyway.
+	 *
+	 * @param bool $force Run the install even when the version option is current.
 	 */
-	public function maybe_upgrade_table() {
+	public function maybe_upgrade_table( $force = false ) {
 		$previous = (string) get_option( self::SCHEMA_VERSION_OPTION, '' );
-		if ( self::SCHEMA_VERSION === $previous ) {
+		if ( ! $force && self::SCHEMA_VERSION === $previous ) {
 			return;
 		}
 

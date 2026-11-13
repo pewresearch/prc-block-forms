@@ -59,6 +59,24 @@ class Form_Response_Retention {
 	const RUN_HOUR = 4;
 
 	/**
+	 * Site option that holds the schedule version the site was last repaired for.
+	 * Autoloaded, so a warm request reads it from the options cache.
+	 *
+	 * @var string
+	 */
+	const SCHEDULE_VERSION_OPTION = 'prc_form_retention_schedule_version';
+
+	/**
+	 * Current schedule version. Raise it to run the one-time repair again.
+	 *
+	 * Version 1 cancels duplicate purge actions that sites collected before the
+	 * purge was scheduled with $unique.
+	 *
+	 * @var int
+	 */
+	const SCHEDULE_VERSION = 1;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param \PRC\Platform\Block_Forms\Loader $loader The loader.
@@ -124,19 +142,68 @@ class Form_Response_Retention {
 		}
 
 		$retention_days = self::get_retention_days();
-		$is_scheduled   = as_has_scheduled_action( self::PURGE_HOOK, array(), self::ACTION_GROUP );
+
+		if ( (int) get_option( self::SCHEDULE_VERSION_OPTION, 0 ) < self::SCHEDULE_VERSION ) {
+			$this->repair_duplicates();
+			update_option( self::SCHEDULE_VERSION_OPTION, self::SCHEDULE_VERSION, true );
+		}
+
+		$is_scheduled = as_has_scheduled_action( self::PURGE_HOOK, array(), self::ACTION_GROUP );
 
 		if ( $retention_days > 0 && ! $is_scheduled ) {
+			// Two parallel requests can both see no action, so Action Scheduler must refuse the second one.
 			as_schedule_recurring_action(
 				self::get_first_run_timestamp(),
 				DAY_IN_SECONDS,
 				self::PURGE_HOOK,
 				array(),
-				self::ACTION_GROUP
+				self::ACTION_GROUP,
+				true
 			);
 		} elseif ( 0 === $retention_days && $is_scheduled ) {
 			as_unschedule_all_actions( self::PURGE_HOOK, array(), self::ACTION_GROUP );
 		}
+	}
+
+	/**
+	 * Cancel the pending purge actions when a site holds more than one live action.
+	 *
+	 * Before the purge was scheduled with $unique, parallel requests could each
+	 * schedule one, and every extra action chains a next instance for good. A
+	 * running action counts, because it stores its own next instance when it
+	 * ends. The schedule check that follows sees no pending action, or sees the
+	 * running one, so it schedules at most one.
+	 */
+	private function repair_duplicates() {
+		$live = count( $this->get_action_ids( 'pending', 2 ) );
+
+		if ( 1 === $live ) {
+			$live += count( $this->get_action_ids( 'in-progress', 1 ) );
+		}
+
+		if ( $live > 1 ) {
+			as_unschedule_all_actions( self::PURGE_HOOK, array(), self::ACTION_GROUP );
+		}
+	}
+
+	/**
+	 * IDs of the purge actions with one status.
+	 *
+	 * @param string $status   Action Scheduler status: pending or in-progress.
+	 * @param int    $per_page Most IDs to read.
+	 * @return int[]
+	 */
+	private function get_action_ids( $status, $per_page ) {
+		return as_get_scheduled_actions(
+			array(
+				'hook'     => self::PURGE_HOOK,
+				'args'     => array(),
+				'group'    => self::ACTION_GROUP,
+				'status'   => $status,
+				'per_page' => $per_page,
+			),
+			'ids'
+		);
 	}
 
 	/**

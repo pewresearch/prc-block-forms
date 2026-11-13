@@ -175,7 +175,7 @@ class Form_Response_Abilities {
 			'prc-block-forms/bulk-update-responses',
 			array(
 				'label'               => __( 'Bulk update form responses', 'prc-block-forms' ),
-				'description'         => __( 'Mark multiple responses as spam/not spam or read/unread. Each response is processed individually; the result reports per-id success and failures.', 'prc-block-forms' ),
+				'description'         => __( 'Mark multiple responses as spam/not spam or read/unread. Each response is processed individually; the result reports per-id success and failures. Not spam also emails each response that was never emailed, once, and reports the ones that were emailed or failed to send.', 'prc-block-forms' ),
 				'category'            => Form_Ability_Categories::CATEGORY,
 				'input_schema'        => array(
 					'type'                 => 'object',
@@ -278,6 +278,9 @@ class Form_Response_Abilities {
 	}
 
 	/**
+	 * Checks the capability that manages responses.
+	 *
+	 * @param mixed $input Ability input. Not used.
 	 * @return bool
 	 */
 	public function can_manage_responses( $input = null ): bool {
@@ -285,6 +288,8 @@ class Form_Response_Abilities {
 	}
 
 	/**
+	 * Lists responses.
+	 *
 	 * @param array $input Ability input.
 	 * @return array|\WP_Error
 	 */
@@ -356,6 +361,8 @@ class Form_Response_Abilities {
 	}
 
 	/**
+	 * Updates one response.
+	 *
 	 * @param array $input Ability input.
 	 * @return array|\WP_Error
 	 */
@@ -381,7 +388,12 @@ class Form_Response_Abilities {
 		if ( in_array( $status, array( 'spam' ), true ) ) {
 			$repository->set_spam( array( $id ), true );
 		} elseif ( in_array( $status, array( 'publish', 'draft', 'inbox' ), true ) ) {
-			$repository->set_spam( array( $id ), false );
+			// Moving a response out of the Spam folder also emails it once, if it was never emailed.
+			$result = ( new Form_Response_Not_Spam( $repository ) )->mark_not_spam( array( $id ) );
+			$failed = $this->not_spam_failure( $id, $result );
+			if ( null !== $failed ) {
+				return $failed;
+			}
 		}
 
 		if ( array_key_exists( 'is_unread', $input ) && null !== $input['is_unread'] ) {
@@ -393,6 +405,37 @@ class Form_Response_Abilities {
 	}
 
 	/**
+	 * Turns a Not spam answer for one response into an error when the response did not move.
+	 *
+	 * A response that moved but whose email failed is not an error here: the
+	 * returned row shows the status (`send_failed` or `send_unknown`).
+	 *
+	 * @param int   $id     The response ID.
+	 * @param array $result The answer of Form_Response_Not_Spam::mark_not_spam().
+	 * @return \WP_Error|null An error when the response stayed in the Spam folder, else null.
+	 */
+	private function not_spam_failure( int $id, array $result ): ?\WP_Error {
+		if ( ! empty( $result['updated'] ) ) {
+			return null;
+		}
+
+		foreach ( (array) ( $result['email_failed'] ?? array() ) as $failure ) {
+			if ( (int) ( $failure['id'] ?? 0 ) !== $id ) {
+				continue;
+			}
+			$message = (string) ( $failure['message'] ?? '' );
+			if ( Form_Response_Not_Spam::BUSY_MESSAGE === $message ) {
+				return new \WP_Error( 'response_in_progress', $message, array( 'status' => 409 ) );
+			}
+			return new \WP_Error( 'not_spam_failed', '' !== $message ? $message : 'The response could not be moved out of the Spam folder.', array( 'status' => 500 ) );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Updates many responses. Not spam also emails each response that was never emailed.
+	 *
 	 * @param array $input Ability input.
 	 * @return array|\WP_Error
 	 */
@@ -409,8 +452,10 @@ class Form_Response_Abilities {
 			return new \WP_Error( 'invalid_ids', 'At least one response ID is required.', array( 'status' => 400 ) );
 		}
 
-		$success = array();
-		$failed  = array();
+		$success      = array();
+		$failed       = array();
+		$emailed      = array();
+		$email_failed = array();
 
 		foreach ( $ids as $id ) {
 			$row = $id ? $repository->get( $id ) : null;
@@ -428,9 +473,11 @@ class Form_Response_Abilities {
 					$ok = ! empty( $repository->get( $id )['is_spam'] );
 					break;
 				case 'mark_as_not_spam':
-					$repository->set_spam( array( $id ), false );
-					$updated_row = $repository->get( $id );
-					$ok          = $updated_row && empty( $updated_row['is_spam'] );
+					$not_spam     = ( new Form_Response_Not_Spam( $repository ) )->mark_not_spam( array( $id ) );
+					$emailed      = array_merge( $emailed, $not_spam['emailed'] );
+					$email_failed = array_merge( $email_failed, $not_spam['email_failed'] );
+					$updated_row  = $repository->get( $id );
+					$ok           = $updated_row && empty( $updated_row['is_spam'] );
 					break;
 				case 'mark_as_read':
 					$repository->set_unread( array( $id ), false );
@@ -456,15 +503,23 @@ class Form_Response_Abilities {
 			}
 		}
 
-		return array(
+		$result = array(
 			'action'  => $action,
 			'success' => $success,
 			'failed'  => $failed,
 			'updated' => count( $success ),
 		);
+		if ( 'mark_as_not_spam' === $action ) {
+			$result['emailed']      = $emailed;
+			$result['email_failed'] = $email_failed;
+		}
+
+		return $result;
 	}
 
 	/**
+	 * Counts responses per folder.
+	 *
 	 * @param array $input Ability input.
 	 * @return array
 	 */
@@ -498,7 +553,15 @@ class Form_Response_Abilities {
 		if ( array_key_exists( 'is_unread', $input ) && false === $input['is_unread'] ) {
 			$unread_total = 0;
 		} else {
-			$unread       = $repository->query( array_merge( $base, array( 'is_spam' => 0, 'is_unread' => 1 ) ) );
+			$unread       = $repository->query(
+				array_merge(
+					$base,
+					array(
+						'is_spam'   => 0,
+						'is_unread' => 1,
+					)
+				)
+			);
 			$unread_total = $unread['total'];
 		}
 
@@ -545,6 +608,8 @@ class Form_Response_Abilities {
 	}
 
 	/**
+	 * Builds the annotations of an ability.
+	 *
 	 * @param bool $readonly    Readonly annotation.
 	 * @param bool $destructive Destructive annotation.
 	 * @param bool $idempotent  Idempotent annotation.

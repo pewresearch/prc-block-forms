@@ -89,6 +89,12 @@ form.wp-block-prc-block-form {
 				flex-direction: column;
 				gap: 1em;
 				font-family: inherit;
+				.wp-block-prc-block-form-processing_status {
+					text-align: center;
+					&:empty {
+						margin-top: -1em;
+					}
+				}
 				&::before {
 					content: "";
 					display: block;

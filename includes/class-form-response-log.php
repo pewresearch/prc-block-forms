@@ -18,6 +18,13 @@ namespace PRC\Platform\Block_Forms;
  */
 class Form_Response_Log {
 	/**
+	 * Seconds the Akismet check may take in total.
+	 *
+	 * @var float
+	 */
+	const AKISMET_TIME_BUDGET = 5.0;
+
+	/**
 	 * Object-cache group for the log-response throttle buckets.
 	 */
 	const THROTTLE_CACHE_GROUP = 'prc_block_form_log_response_throttle';
@@ -47,6 +54,8 @@ class Form_Response_Log {
 	}
 
 	/**
+	 * Registers the logResponse REST route.
+	 *
 	 * @hook rest_api_init
 	 */
 	public function register_rest_endpoints() {
@@ -75,23 +84,14 @@ class Form_Response_Log {
 	 *     @type int    $form_post_id The form CPT post ID, when the submission came through a synced form. Default 0.
 	 *     @type string $form_name    The form name.
 	 *     @type string $action       The form action, e.g. 'sendToEmail' or 'logResponse'.
-	 *     @type string $status       Response status, e.g. 'received', 'sent', 'send_failed'. Default 'received'.
+	 *     @type string $status       Response status, one of Form_Response_Repository::STATUSES. Default 'received'.
 	 *     @type array  $fields       The submitted form fields (raw; sanitized and stripped of system fields here).
+	 *     @type bool   $is_spam      A verdict from classify_spam_safely() made before the call. Default: classify here.
 	 * }
 	 * @return int|false The response row ID on success, false when logging is disabled or fails.
 	 */
 	public static function log( array $args ) {
-		if ( ! class_exists( '\PRC\Platform\Block_Forms\Form_Response_Repository' ) ) {
-			return false;
-		}
-
-		/**
-		 * Filter whether form response logging is enabled.
-		 *
-		 * @param bool  $enabled Whether to log this response. Default true.
-		 * @param array $args    The response data about to be logged.
-		 */
-		if ( ! apply_filters( 'prc_block_form_response_logging_enabled', true, $args ) ) {
+		if ( ! self::is_enabled( $args ) ) {
 			return false;
 		}
 
@@ -114,6 +114,7 @@ class Form_Response_Log {
 			$source_post_id = wpcom_vip_url_to_postid( $source_url );
 		}
 
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__HTTP_USER_AGENT__ -- read in a REST POST, which the page cache never serves.
 		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? substr( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ), 0, 255 ) : '';
 
 		$repository = new Form_Response_Repository();
@@ -130,7 +131,7 @@ class Form_Response_Log {
 				'source_post_id' => $source_post_id,
 				'user_id'        => get_current_user_id(),
 				'user_agent'     => $user_agent,
-				'is_spam'        => self::classify_spam( $fields, $args ),
+				'is_spam'        => isset( $args['is_spam'] ) ? (bool) $args['is_spam'] : self::classify_spam_safely( $fields, $args ),
 			)
 		);
 
@@ -150,11 +151,56 @@ class Form_Response_Log {
 	}
 
 	/**
-	 * Classify a response as spam at log time.
+	 * Verdicts of the logging filter, per request. A submission asks three
+	 * times (the handler, its failure check, and log()), and the filter runs
+	 * site code each time.
+	 *
+	 * @var array<string, bool>
+	 */
+	private static $enabled_cache = array();
+
+	/**
+	 * Whether log() stores this response, so a caller can tell "logging is
+	 * off" from "the insert failed" when log() returns false.
+	 *
+	 * The verdict is cached for the rest of the request, per form and action.
+	 *
+	 * @param array $args The response data, as passed to log().
+	 * @return bool
+	 */
+	public static function is_enabled( array $args ) {
+		if ( ! class_exists( '\PRC\Platform\Block_Forms\Form_Response_Repository' ) ) {
+			return false;
+		}
+
+		$key = absint( $args['form_post_id'] ?? 0 ) . '|' . (string) ( $args['form_name'] ?? '' ) . '|' . (string) ( $args['action'] ?? '' );
+		if ( ! isset( self::$enabled_cache[ $key ] ) ) {
+			/**
+			 * Filter whether form response logging is enabled.
+			 *
+			 * @param bool  $enabled Whether to log this response. Default true.
+			 * @param array $args    The response data about to be logged.
+			 */
+			self::$enabled_cache[ $key ] = (bool) apply_filters( 'prc_block_form_response_logging_enabled', true, $args );
+		}
+
+		return self::$enabled_cache[ $key ];
+	}
+
+	/**
+	 * Forget the cached logging verdicts. For tests and long-running CLI jobs.
+	 */
+	public static function reset_enabled_cache() {
+		self::$enabled_cache = array();
+	}
+
+	/**
+	 * Classify a response as spam.
 	 *
 	 * Spam is foldered, never dropped — the response is stored with
 	 * `is_spam = 1` and lands in the Responses screen's Spam folder, so
-	 * false positives stay recoverable via "Not spam".
+	 * false positives stay recoverable via "Not spam". sendToEmail classifies
+	 * before it stores the row, and does not email spam it has stored.
 	 *
 	 * Built-in heuristics: link flooding (3+ URLs across field values,
 	 * threshold filterable) and an editor-managed term blocklist (empty by
@@ -214,10 +260,34 @@ class Form_Response_Log {
 	}
 
 	/**
+	 * Classify a response, and treat any failure as "not spam".
+	 *
+	 * A classifier error must not lose the entry. The verdict is advisory:
+	 * a false "not spam" costs one spam email, a lost entry cannot be got back.
+	 *
+	 * @param array $fields The sanitized fields.
+	 * @param array $args   The response data passed to log().
+	 * @return bool Whether the response is spam. False when classification throws.
+	 */
+	public static function classify_spam_safely( array $fields, array $args ) {
+		try {
+			return self::classify_spam( $fields, $args );
+		} catch ( \Throwable $e ) {
+			error_log( sprintf( '[prc-block-forms] Spam classification failed, treating the entry as not spam: %s', $e->getMessage() ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- VIP routes this to the log stream.
+			return false;
+		}
+	}
+
+	/**
 	 * Consult Akismet's comment-check for a spam verdict, when available.
 	 *
 	 * Silently skipped when the Akismet plugin is inactive or has no API
 	 * key. Failures are treated as "not spam" — Akismet is advisory here.
+	 *
+	 * The whole call is bounded to AKISMET_TIME_BUDGET seconds. Akismet's own
+	 * client waits up to 15 seconds and tries three times (HTTPS, an HTTPS
+	 * retry, then HTTP), which is 45 seconds on a dead API. The budget caps
+	 * each attempt to the time left and skips the attempts after it runs out.
 	 *
 	 * @param array $fields The sanitized fields.
 	 * @return bool Whether Akismet judged the submission spam.
@@ -240,6 +310,7 @@ class Form_Response_Log {
 		$body = array(
 			'blog'                 => get_option( 'home' ),
 			'user_ip'              => function_exists( '\\PRC\\Platform\\get_client_ip' ) ? \PRC\Platform\get_client_ip() : '',
+			// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__HTTP_USER_AGENT__ -- read in a REST POST, which the page cache never serves.
 			'user_agent'           => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '',
 			'referrer'             => wp_get_referer() ? esc_url_raw( wp_get_referer() ) : '',
 			'comment_type'         => 'contact-form',
@@ -248,9 +319,49 @@ class Form_Response_Log {
 			'comment_content'      => implode( "\n", $content ),
 		);
 
-		$response = \Akismet::http_post( http_build_query( $body ), 'comment-check' );
+		/**
+		 * Filter the seconds the whole Akismet check may take.
+		 *
+		 * @param float $seconds Default 5.
+		 */
+		$deadline = microtime( true ) + max( 0.1, (float) apply_filters( 'prc_block_form_akismet_time_budget', self::AKISMET_TIME_BUDGET ) );
+		$cap_time = static function ( $request_args, $url ) use ( $deadline ) {
+			if ( self::is_akismet_url( $url ) ) {
+				$request_args['timeout'] = max( 0.1, $deadline - microtime( true ) );
+			}
+			return $request_args;
+		};
+		$stop     = static function ( $preempt, $request_args, $url ) use ( $deadline ) {
+			if ( self::is_akismet_url( $url ) && microtime( true ) >= $deadline ) {
+				return new \WP_Error( 'prc_forms_akismet_budget', 'The Akismet time budget is spent.' );
+			}
+			return $preempt;
+		};
+
+		add_filter( 'http_request_args', $cap_time, 99, 2 ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.http_request_args -- this lowers Akismet's 15 s timeout to the budget; it never raises it.
+		add_filter( 'pre_http_request', $stop, 99, 3 );
+		try {
+			$response = \Akismet::http_post( http_build_query( $body ), 'comment-check' );
+		} catch ( \Throwable $e ) {
+			error_log( sprintf( '[prc-block-forms] Akismet check failed, treating the entry as not spam: %s', $e->getMessage() ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- VIP routes this to the log stream.
+			return false;
+		} finally {
+			remove_filter( 'http_request_args', $cap_time, 99 );
+			remove_filter( 'pre_http_request', $stop, 99 );
+		}
 
 		return isset( $response[1] ) && 'true' === trim( (string) $response[1] );
+	}
+
+	/**
+	 * Whether a request URL goes to the Akismet API.
+	 *
+	 * @param mixed $url The request URL.
+	 * @return bool
+	 */
+	private static function is_akismet_url( $url ) {
+		$host = wp_parse_url( (string) $url, PHP_URL_HOST );
+		return is_string( $host ) && 'akismet.com' === substr( $host, -11 );
 	}
 
 	/**

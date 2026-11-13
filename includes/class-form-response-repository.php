@@ -25,6 +25,31 @@ class Form_Response_Repository {
 	const DELETE_BATCH_SIZE = 500;
 
 	/**
+	 * Every status a row may hold. The column is VARCHAR(32), so a free-form
+	 * status would be cut short or rejected.
+	 *
+	 * - received: stored with no email step (logResponse).
+	 * - pending: stored, email not yet sent. A row that stays here means the request died.
+	 * - sent / send_failed: the email result.
+	 * - send_unknown: the mailer did not answer in time. The email may or may not have been delivered, and it is never sent again.
+	 * - spam: classified as spam at submit. Stored, not emailed.
+	 * - send_blocked_non_production, subscribed, subscribe_failed: set by other actions.
+	 *
+	 * @var string[]
+	 */
+	const STATUSES = array(
+		'received',
+		'pending',
+		'sent',
+		'send_failed',
+		'send_unknown',
+		'spam',
+		'send_blocked_non_production',
+		'subscribed',
+		'subscribe_failed',
+	);
+
+	/**
 	 * The schema manager instance.
 	 *
 	 * @var \PRC\Platform\Block_Forms\Form_Response_Schema
@@ -49,7 +74,7 @@ class Form_Response_Repository {
 	 *     @type int    $form_id        Form post ID (0 for legacy inline forms).
 	 *     @type string $form_name      Form name.
 	 *     @type string $action         The form action, e.g. 'sendToEmail'.
-	 *     @type string $status         Response status, e.g. 'received', 'sent', 'send_failed'.
+	 *     @type string $status         Response status, e.g. one of self::STATUSES.
 	 *     @type string $email          Submitter email address.
 	 *     @type string $from_name      Submitter name.
 	 *     @type array  $fields         Sanitized label/value field payload.
@@ -61,9 +86,29 @@ class Form_Response_Repository {
 	 * @return int|false The row ID on success, false on failure.
 	 */
 	public function insert( array $data ) {
-		global $wpdb;
-
 		$this->schema->maybe_upgrade_table();
+
+		$row_id = $this->insert_row( $data );
+		if ( false !== $row_id ) {
+			return $row_id;
+		}
+
+		// The version option can say the schema is current while the table is
+		// missing or broken (for example after a database sync). Repair once,
+		// then try once more.
+		$this->schema->maybe_upgrade_table( true );
+
+		return $this->insert_row( $data );
+	}
+
+	/**
+	 * Runs one INSERT for a response row.
+	 *
+	 * @param array $data Response data. See insert().
+	 * @return int|false The row ID on success, false on failure.
+	 */
+	private function insert_row( array $data ) {
+		global $wpdb;
 
 		$result = $wpdb->insert(
 			$this->schema->get_table_name(),
@@ -279,11 +324,17 @@ class Form_Response_Repository {
 	/**
 	 * Moves responses into or out of the spam folder.
 	 *
-	 * @param int[] $ids     The row IDs to update.
-	 * @param bool  $is_spam True to mark as spam, false to restore to the inbox.
+	 * Restoring a row also resets a `spam` status to `received`, unless the
+	 * caller passes $reset_status false. The `spam` status means "held back
+	 * from email". Form_Response_Not_Spam keeps it: it reads the status to
+	 * decide whether to email the row, and then sets the status itself.
+	 *
+	 * @param int[] $ids          The row IDs to update.
+	 * @param bool  $is_spam      True to mark as spam, false to restore to the inbox.
+	 * @param bool  $reset_status Whether a restore turns a `spam` status into `received`. Form_Response_Not_Spam passes false: it reads the status first.
 	 * @return int Number of rows updated.
 	 */
-	public function set_spam( array $ids, $is_spam ) {
+	public function set_spam( array $ids, $is_spam, $reset_status = true ) {
 		global $wpdb;
 
 		$ids = array_filter( array_map( 'absint', $ids ) );
@@ -294,14 +345,99 @@ class Form_Response_Repository {
 		$table_name   = $this->schema->get_table_name();
 		$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
 
+		$status_reset = ( $is_spam || ! $reset_status ) ? '' : ", status = CASE WHEN status = 'spam' THEN 'received' ELSE status END";
+
 		$updated = $wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$table_name} SET is_spam = %d WHERE id IN ( {$placeholders} )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"UPDATE {$table_name} SET is_spam = %d{$status_reset} WHERE id IN ( {$placeholders} )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $status_reset holds no user input.
 				array_merge( array( $is_spam ? 1 : 0 ), $ids )
 			)
 		);
 
 		return $updated ? (int) $updated : 0;
+	}
+
+	/**
+	 * Sets the status of one response.
+	 *
+	 * @param int    $id     The row ID.
+	 * @param string $status The new status. One of self::STATUSES.
+	 * @return bool True when the row exists and holds the status. False for an
+	 *              unknown status, a missing row, or a database error.
+	 */
+	public function set_status( $id, $status ) {
+		global $wpdb;
+
+		$id = absint( $id );
+		if ( ! $id || ! is_string( $status ) || ! in_array( $status, self::STATUSES, true ) ) {
+			return false;
+		}
+
+		$table_name = $this->schema->get_table_name();
+		$updated    = $wpdb->update(
+			$table_name,
+			array( 'status' => $status ),
+			array( 'id' => $id ),
+			array( '%s' ),
+			array( '%d' )
+		);
+
+		if ( false === $updated ) {
+			return false;
+		}
+
+		if ( 0 === (int) $updated ) {
+			// MySQL reports 0 changed rows both for a missing row and for a row
+			// that already holds the status. Only the second case is a success.
+			return null !== $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT id FROM {$table_name} WHERE id = %d AND status = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					$id,
+					$status
+				)
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Moves a response to a status only when it holds one of the given statuses.
+	 *
+	 * The check and the write are one statement, so a request that stalled
+	 * after it read the row cannot overwrite what another request wrote since.
+	 * `$to` must not be in `$from`. Then the row always changes, and the
+	 * affected-row count tells a win from a loss.
+	 *
+	 * @param int      $id   The row ID.
+	 * @param string   $to   The new status.
+	 * @param string[] $from The statuses the row may hold now.
+	 * @return int|false 1 when the row moved, 0 when it held another status or is gone,
+	 *                   false for an unknown status or a database error.
+	 */
+	public function transition_status( $id, $to, array $from ) {
+		global $wpdb;
+
+		$id = absint( $id );
+		if ( ! $id || ! is_string( $to ) || ! in_array( $to, self::STATUSES, true ) || array() === $from || in_array( $to, $from, true ) ) {
+			return false;
+		}
+		foreach ( $from as $status ) {
+			if ( ! is_string( $status ) || ! in_array( $status, self::STATUSES, true ) ) {
+				return false;
+			}
+		}
+
+		$table_name   = $this->schema->get_table_name();
+		$placeholders = implode( ', ', array_fill( 0, count( $from ), '%s' ) );
+		$changed      = $wpdb->query(
+			$wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- one placeholder per status, and the values are passed as one array.
+				"UPDATE {$table_name} SET status = %s WHERE id = %d AND status IN ( {$placeholders} )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- the table name and the placeholder list are built here.
+				array_merge( array( $to, $id ), array_values( $from ) )
+			)
+		);
+
+		return false === $changed ? false : (int) $changed;
 	}
 
 	/**

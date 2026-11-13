@@ -270,6 +270,7 @@ class Form {
 		$tag->set_attribute( 'data-wp-watch---onCaptchaPassing', 'callbacks.onCaptchaPassing' );
 		$tag->set_attribute( 'data-wp-watch---sendSubmission', 'callbacks.sendSubmission' );
 		$tag->set_attribute( 'data-wp-watch---onProcessing', 'callbacks.onProcessing' );
+		$tag->set_attribute( 'data-wp-watch---onFieldsEdited', 'callbacks.onFieldsEdited' );
 
 		// Rewind.
 		$tag->set_bookmark( 'form_start' );
@@ -298,6 +299,7 @@ class Form {
 			wp_json_encode(
 				array(
 					'formId'               => $block_id,
+					'instanceId'           => wp_unique_id( 'prc-block-form-instance-' ),
 					'formPostId'           => $form_post_id,
 					'formName'             => $attributes['formName'] ?? get_the_title() . ' Form',
 					'errors'               => array(),
@@ -327,7 +329,7 @@ class Form {
 
 		// Add errors and processing spinner to the end of the form.
 		$regex       = '/<\/form>/';
-		$replacement = $this->render_errors() . '<div class="wp-block-prc-block-form-processing"><div class="wp-block-prc-block-form-processing_spinner"><span>Processing...</span></div></div></form>';
+		$replacement = $this->render_errors() . '<div class="wp-block-prc-block-form-processing"><div class="wp-block-prc-block-form-processing_spinner"><span>Processing...</span><span class="wp-block-prc-block-form-processing_status" role="status" aria-live="polite" data-wp-text="state.formStatusMessage"></span></div></div></form>';
 		return preg_replace( $regex, $replacement, $content );
 	}
 

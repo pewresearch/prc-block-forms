@@ -278,17 +278,23 @@ class Form_Responses_REST_Controller {
 	/**
 	 * Move responses into or out of the spam folder.
 	 *
+	 * Moving out of the folder emails each response that was never emailed.
+	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response
 	 */
 	public function set_responses_spam( $request ) {
-		$ids        = (array) $request->get_param( 'ids' );
-		$is_spam    = (bool) $request->get_param( 'is_spam' );
-		$repository = new Form_Response_Repository();
+		$ids     = (array) $request->get_param( 'ids' );
+		$is_spam = (bool) $request->get_param( 'is_spam' );
+
+		// Not spam also emails a response that was never emailed. The answer says what was sent and what failed.
+		if ( ! $is_spam ) {
+			return new \WP_REST_Response( ( new Form_Response_Not_Spam() )->mark_not_spam( $ids ), 200 );
+		}
 
 		return new \WP_REST_Response(
 			array(
-				'updated' => $repository->set_spam( $ids, $is_spam ),
+				'updated' => ( new Form_Response_Repository() )->set_spam( $ids, true ),
 			),
 			200
 		);

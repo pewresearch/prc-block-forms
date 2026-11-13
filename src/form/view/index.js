@@ -11,32 +11,32 @@ import {
 
 import subscribe from './subscribe';
 import { FormPersistence } from './persistence';
-import { sendSubmission } from './submit';
+import {
+	focusAfterDismiss,
+	formPhaseKey,
+	formValuesKey,
+	sendSubmission,
+} from './submit';
+import { collectFormFields } from './collect-form-fields';
 import { savePristineFormFields, stepPaginatedForm } from './page-navigation';
-
-const collectFormFields = (ref) => {
-	// find all the input elements in the ref that have a class name that contains at least 'wp-block-prc-block-form-input-*'
-	const inputElements = ref.querySelectorAll(
-		'input, select, textarea, .wp-block-prc-block-form-input-password, .wp-block-prc-block-form-input-radio-group'
-	);
-	// Find all that have a name attribute and return an array of objects with the name, the value, and the ref
-	const formFields = [];
-	inputElements.forEach((input) => {
-		if (input.type === 'password') {
-			return;
-		}
-		if (input.id) {
-			formFields.push(input.id);
-		}
-	});
-	return formFields;
-};
 
 const { state, actions } = store('prc-block/form', {
 	state: {
-		success: false,
-		error: false,
+		/**
+		 * Submit phase per form instance: idle, submitting, success, or error.
+		 * The instance ID comes from the server and is unique on the page, so
+		 * forms that share an anchor ID keep separate phases.
+		 */
+		formPhases: {},
+		/** Status line a form shows while it submits. Keyed like formPhases. */
+		formStatusMessages: {},
 		processing: false,
+		get formPhase() {
+			return state.formPhases[formPhaseKey(getContext())] || 'idle';
+		},
+		get formStatusMessage() {
+			return state.formStatusMessages[formPhaseKey(getContext())] || '';
+		},
 		get submissionDisabled() {
 			const context = getContext();
 			return !context.allowSubmit;
@@ -154,11 +154,11 @@ const { state, actions } = store('prc-block/form', {
 			const { id } = attributes;
 			return (
 				formFields.find((field) => field.id === id)?.error ||
-				state.error
+				'error' === state.formPhase
 			);
 		},
 		get isInputSuccess() {
-			return state.success;
+			return 'success' === state.formPhase;
 		},
 		get isInputProcessing() {
 			return state.processing;
@@ -169,7 +169,9 @@ const { state, actions } = store('prc-block/form', {
 		},
 		get formMessage() {
 			const context = getContext();
-			return context?.formMessage || false;
+			return (
+				('success' === state.formPhase && context?.formMessage) || false
+			);
 		},
 		get isPageHidden() {
 			const context = getContext();
@@ -384,6 +386,7 @@ const { state, actions } = store('prc-block/form', {
 				return;
 			}
 
+			state.formPhases[formPhaseKey(context)] = 'submitting';
 			context.submissionProcessing = null;
 
 			const { ref: formEl } = getElement();
@@ -400,7 +403,8 @@ const { state, actions } = store('prc-block/form', {
 		}),
 		/**
 		 * Resets the form submission process to initial state.
-		 * This allows the user to submit the form again.
+		 * This allows the user to submit the form again. The saved draft
+		 * stays, because the entry has not been sent.
 		 */
 		onReset: () => {
 			const context = getContext();
@@ -410,7 +414,7 @@ const { state, actions } = store('prc-block/form', {
 			context.allowSubmit = true;
 			context.errors = [];
 			context._isSubmitting = false; // Reset submission flag
-			FormPersistence.clearFormData(context.formId);
+			state.formPhases[formPhaseKey(context)] = 'idle';
 		},
 		/**
 		 * Dismissing an error message resets the form submission process to initial state.
@@ -418,10 +422,14 @@ const { state, actions } = store('prc-block/form', {
 		onErrorClick: withSyncEvent((event) => {
 			event.preventDefault();
 			const { actionUrl } = event.target.dataset;
+			const formEl = event.target.closest('form');
 			if (actionUrl) {
 				window.location.href = actionUrl;
 			}
 			actions.onReset();
+			if (!actionUrl) {
+				focusAfterDismiss(formEl);
+			}
 		}),
 		subscribe: async (fieldsForSubmission) => {
 			const context = getContext();
@@ -541,6 +549,27 @@ const { state, actions } = store('prc-block/form', {
 			const context = getContext();
 			if (context.captchaPassed) {
 				context.captchaHidden = true;
+			}
+		},
+		/**
+		 * An edit after an answer returns the form to idle, and dismisses an
+		 * error the way onReset() does. Select and radio inputs write
+		 * state.formFields directly, so this compares the values instead of
+		 * hooking the input actions.
+		 */
+		onFieldsEdited: () => {
+			const context = getContext();
+			const phase = state.formPhases[formPhaseKey(context)];
+			if (
+				('success' !== phase && 'error' !== phase) ||
+				formValuesKey(state, context) === context._answeredValues
+			) {
+				return;
+			}
+			if ('error' === phase) {
+				actions.onReset();
+			} else {
+				state.formPhases[formPhaseKey(context)] = 'idle';
 			}
 		},
 		sendSubmission,

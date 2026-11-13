@@ -142,6 +142,14 @@ export default function ResponsesApp({ formId = 0 }) {
 			>
 				{() => null}
 			</TabPanel>
+			{'spam' === folder && (
+				<Notice status="info" isDismissible={false}>
+					{__(
+						'Spam entries are stored here and are not emailed. "Not spam" moves an entry back to the inbox and sends its email once.',
+						'prc-block-forms'
+					)}
+				</Notice>
+			)}
 			{error ? (
 				<Notice status="error" isDismissible={false}>
 					{error}

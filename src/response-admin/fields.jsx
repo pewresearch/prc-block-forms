@@ -7,6 +7,11 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 
+/**
+ * Internal Dependencies
+ */
+import { getStatusInfo } from './utils';
+
 function getLocalizedData() {
 	return window?.prcFormResponses || {};
 }
@@ -33,7 +38,7 @@ function getStatusFilterElements() {
 	const { statuses = [] } = getLocalizedData();
 	return statuses.map((status) => ({
 		value: status,
-		label: status,
+		label: getStatusInfo(status).label,
 	}));
 }
 
@@ -112,6 +117,21 @@ const fields = [
 		id: 'status',
 		label: __('Status', 'prc-block-forms'),
 		getValue: ({ item }) => item?.status || '',
+		render: ({ item }) => {
+			const { label, help, needsAttention } = getStatusInfo(item?.status);
+			return (
+				<span
+					className={
+						needsAttention
+							? 'prc-form-responses__status prc-form-responses__status--attention'
+							: 'prc-form-responses__status'
+					}
+					title={help}
+				>
+					{label || __('—', 'prc-block-forms')}
+				</span>
+			);
+		},
 		elements: getStatusFilterElements(),
 		filterBy: {
 			operators: ['isAny'],

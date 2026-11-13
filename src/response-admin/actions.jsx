@@ -24,7 +24,7 @@ import { useState } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import { exportResponsesToCsv } from './utils';
+import { exportResponsesToCsv, getStatusInfo } from './utils';
 
 function formatFieldValue(field) {
 	if (field.type === 'checkbox' || field.type === 'radio') {
@@ -41,7 +41,12 @@ function ViewResponseModal({ items }) {
 		[__('Date', 'prc-block-forms'), item.date],
 		[__('Form', 'prc-block-forms'), item.formTitle || item.formName || '—'],
 		[__('Action', 'prc-block-forms'), item.action],
-		[__('Status', 'prc-block-forms'), item.status],
+		[
+			__('Status', 'prc-block-forms'),
+			[getStatusInfo(item.status).label, getStatusInfo(item.status).help]
+				.filter(Boolean)
+				.join(' — '),
+		],
 		[__('Source', 'prc-block-forms'), item.sourceUrl || '—'],
 		[__('User Agent', 'prc-block-forms'), item.userAgent || '—'],
 		[
@@ -164,7 +169,7 @@ function DeleteResponseModal({ items, closeModal, onActionPerformed }) {
 async function setSpam(items, isSpam, refresh) {
 	const { createErrorNotice, createSuccessNotice } = dispatch(noticesStore);
 	try {
-		await apiFetch({
+		const answer = await apiFetch({
 			path: '/prc-api/v3/form/responses/spam',
 			method: 'POST',
 			data: {
@@ -172,23 +177,52 @@ async function setSpam(items, isSpam, refresh) {
 				is_spam: isSpam,
 			},
 		});
-		createSuccessNotice(
-			isSpam
-				? sprintf(
-						/* translators: %d: number of responses */
-						__('%d response(s) marked as spam.', 'prc-block-forms'),
-						items.length
-					)
-				: sprintf(
-						/* translators: %d: number of responses */
-						__(
-							'%d response(s) moved back to the inbox.',
-							'prc-block-forms'
-						),
-						items.length
-					),
-			{ type: 'snackbar' }
-		);
+
+		if (isSpam) {
+			createSuccessNotice(
+				sprintf(
+					/* translators: %d: number of responses */
+					__('%d response(s) marked as spam.', 'prc-block-forms'),
+					items.length
+				),
+				{ type: 'snackbar' }
+			);
+		} else {
+			const emailed = answer?.emailed?.length ?? 0;
+			const failures = answer?.email_failed ?? [];
+			const moved = answer?.updated ?? 0;
+
+			if (moved > 0) {
+				createSuccessNotice(
+					emailed > 0
+						? sprintf(
+								/* translators: 1: number of responses moved, 2: number of emails sent */
+								__(
+									'%1$d response(s) moved back to the inbox. %2$d email(s) sent.',
+									'prc-block-forms'
+								),
+								moved,
+								emailed
+							)
+						: sprintf(
+								/* translators: %d: number of responses moved */
+								__(
+									'%d response(s) moved back to the inbox.',
+									'prc-block-forms'
+								),
+								moved
+							),
+					{ type: 'snackbar' }
+				);
+			}
+
+			// One notice per distinct message. Twenty failures read as one problem.
+			[...new Set(failures.map((failure) => failure.message))].forEach(
+				(message) => {
+					createErrorNotice(message, { type: 'snackbar' });
+				}
+			);
+		}
 	} catch {
 		createErrorNotice(
 			__('Could not update the selected response(s).', 'prc-block-forms'),

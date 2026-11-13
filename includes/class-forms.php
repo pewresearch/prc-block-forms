@@ -30,6 +30,7 @@ class Forms {
 	public function __construct( $loader ) {
 		require_once __DIR__ . '/class-form-response-schema.php';
 		require_once __DIR__ . '/class-form-response-repository.php';
+		require_once __DIR__ . '/class-form-response-not-spam.php';
 		require_once __DIR__ . '/class-form-response-retention.php';
 		require_once __DIR__ . '/class-form-responses-rest-controller.php';
 		require_once __DIR__ . '/class-form-responses-assets.php';
