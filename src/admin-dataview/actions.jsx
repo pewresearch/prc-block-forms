@@ -9,7 +9,7 @@ export default function getFormActions(
 		if ('edit' === action.id) {
 			return {
 				...action,
-				label: __('Edit Form', 'prc-block-forms'),
+				label: __('Edit form', 'prc-block-forms'),
 			};
 		}
 
@@ -25,7 +25,7 @@ export default function getFormActions(
 
 	const viewResponses = {
 		id: 'view-responses',
-		label: __('View Responses', 'prc-block-forms'),
+		label: __('View responses', 'prc-block-forms'),
 		icon: inbox,
 		isEligible: (item) => !!item?.responses,
 		callback: ([item]) => {
