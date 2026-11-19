@@ -46,41 +46,53 @@ class Form_Responses_REST_Controller {
 				'callback'            => array( $this, 'get_responses' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
 				'args'                => array(
-					'page'      => array(
+					'page'           => array(
 						'type'    => 'integer',
 						'default' => 1,
 					),
-					'per_page'  => array(
+					'per_page'       => array(
 						'type'    => 'integer',
 						'default' => 25,
 					),
-					'search'    => array(
+					'search'         => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'form_id'   => array(
+					'form_id'        => array(
 						'type'    => 'integer',
 						'default' => 0,
 					),
-					'form_name' => array(
+					'form_name'      => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'status'    => array(
+					'status'         => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'is_spam'   => array(
+					'is_spam'        => array(
 						'type'    => 'integer',
 						'default' => 0,
 					),
-					'is_unread' => array(
+					'is_unread'      => array(
 						'type'    => 'integer',
 						'default' => -1,
 					),
-					'order'     => array(
+					'order'          => array(
 						'type'    => 'string',
 						'default' => 'desc',
+					),
+					'source_post_id' => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'source_url'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'before'         => array(
+						'type'    => 'string',
+						'default' => '',
 					),
 				),
 			)
@@ -179,14 +191,17 @@ class Form_Responses_REST_Controller {
 		$repository = new Form_Response_Repository();
 
 		$query_args = array(
-			'page'      => $request->get_param( 'page' ),
-			'per_page'  => $request->get_param( 'per_page' ),
-			'search'    => sanitize_text_field( $request->get_param( 'search' ) ),
-			'form_id'   => absint( $request->get_param( 'form_id' ) ),
-			'form_name' => sanitize_text_field( $request->get_param( 'form_name' ) ),
-			'status'    => sanitize_text_field( $request->get_param( 'status' ) ),
-			'is_spam'   => absint( $request->get_param( 'is_spam' ) ),
-			'order'     => $request->get_param( 'order' ),
+			'page'           => $request->get_param( 'page' ),
+			'per_page'       => $request->get_param( 'per_page' ),
+			'search'         => sanitize_text_field( $request->get_param( 'search' ) ),
+			'form_id'        => absint( $request->get_param( 'form_id' ) ),
+			'form_name'      => sanitize_text_field( $request->get_param( 'form_name' ) ),
+			'status'         => sanitize_text_field( $request->get_param( 'status' ) ),
+			'is_spam'        => absint( $request->get_param( 'is_spam' ) ),
+			'order'          => $request->get_param( 'order' ),
+			'source_post_id' => absint( $request->get_param( 'source_post_id' ) ),
+			'source_url'     => esc_url_raw( (string) $request->get_param( 'source_url' ) ),
+			'before'         => sanitize_text_field( (string) $request->get_param( 'before' ) ),
 		);
 
 		$is_unread = $request->get_param( 'is_unread' );

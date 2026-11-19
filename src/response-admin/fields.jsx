@@ -42,6 +42,15 @@ function getStatusFilterElements() {
 	}));
 }
 
+/**
+ * Elements for the Source filter, most used first. `post:<id>` targets the
+ * source post, `url:<url>` targets pages that did not resolve to a post.
+ */
+function getSourceFilterElements() {
+	const { sources = [] } = getLocalizedData();
+	return sources;
+}
+
 function getFormLabel(item) {
 	return item?.formTitle || item?.formName || '';
 }
@@ -159,6 +168,10 @@ const fields = [
 					{label}
 				</a>
 			);
+		},
+		elements: getSourceFilterElements(),
+		filterBy: {
+			operators: ['is'],
 		},
 		enableSorting: false,
 	},

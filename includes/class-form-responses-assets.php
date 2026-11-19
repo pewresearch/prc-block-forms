@@ -27,8 +27,44 @@ class Form_Responses_Assets {
 			'forms'               => self::get_forms_list(),
 			'statuses'            => $filter_options['statuses'],
 			'legacyFormNames'     => $filter_options['legacy_form_names'],
+			'sources'             => self::get_sources_list( $filter_options['source_post_ids'], $filter_options['source_urls'] ),
 			'canCreateCrmContact' => Form_List::is_crm_plugin_active(),
 		);
+	}
+
+	/**
+	 * Elements for the Source filter. Values are prefixed like the Form filter:
+	 * `post:<id>` targets `source_post_id`, `url:<url>` targets `source_url`.
+	 *
+	 * @param int[]    $post_ids Source post IDs, most used first.
+	 * @param string[] $urls     Source URLs with no post, most used first.
+	 * @return array<int, array{value: string, label: string}>
+	 */
+	public static function get_sources_list( array $post_ids, array $urls ) {
+		$sources = array();
+
+		if ( $post_ids ) {
+			_prime_post_caches( $post_ids, false, false );
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$title     = get_the_title( $post_id );
+			$sources[] = array(
+				'value' => 'post:' . $post_id,
+				/* translators: %d: post ID */
+				'label' => '' !== $title ? wp_strip_all_tags( $title ) : sprintf( __( 'Post #%d', 'prc-block-forms' ), $post_id ),
+			);
+		}
+
+		foreach ( $urls as $url ) {
+			$path      = wp_parse_url( $url, PHP_URL_PATH );
+			$sources[] = array(
+				'value' => 'url:' . $url,
+				'label' => $path ? $path : $url,
+			);
+		}
+
+		return $sources;
 	}
 
 	/**

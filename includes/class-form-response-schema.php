@@ -34,8 +34,9 @@ class Form_Response_Schema {
 	 *
 	 * Version 2 added the `is_spam` flag and the (is_spam, created_at) index for spam foldering.
 	 * Version 3 added the `is_unread` flag and the (is_unread, created_at) index for read/unread.
+	 * Version 4 added the source_post_id index for the Source filter.
 	 */
-	const SCHEMA_VERSION = '3';
+	const SCHEMA_VERSION = '4';
 
 	/**
 	 * Ensures the responses table matches the current schema version.
@@ -140,7 +141,8 @@ class Form_Response_Schema {
 			KEY idx_email (email),
 			KEY idx_status (status),
 			KEY idx_is_spam_created_at (is_spam,created_at),
-			KEY idx_is_unread_created_at (is_unread,created_at)
+			KEY idx_is_unread_created_at (is_unread,created_at),
+			KEY idx_source_post_id (source_post_id)
 		) {$charset_collate};";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';

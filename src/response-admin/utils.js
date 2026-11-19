@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
  */
 function escapeCsvValue(value) {
 	const stringValue = String(value ?? '');
-	if (/[",\n]/.test(stringValue)) {
+	if (/[",\r\n]/.test(stringValue)) {
 		return `"${stringValue.replace(/"/g, '""')}"`;
 	}
 	return stringValue;
@@ -22,9 +22,10 @@ function escapeCsvValue(value) {
  * union of every field label/name across the selected responses, so mixed
  * forms export cleanly.
  *
- * @param {Array} items The response rows to export.
+ * @param {Array}  items          The response rows to export.
+ * @param {string} filenameSuffix Optional slug appended to the file name.
  */
-export function exportResponsesToCsv(items) {
+export function exportResponsesToCsv(items, filenameSuffix = '') {
 	if (!items.length) {
 		return;
 	}
@@ -68,11 +69,21 @@ export function exportResponsesToCsv(items) {
 		...rows.map((row) => row.map(escapeCsvValue).join(',')),
 	].join('\n');
 
-	const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+	// The BOM makes Excel read the file as UTF-8.
+	const blob = new Blob(['\uFEFF', csv], {
+		type: 'text/csv;charset=utf-8;',
+	});
 	const url = URL.createObjectURL(blob);
 	const link = document.createElement('a');
 	link.href = url;
-	link.download = `form-responses-${new Date().toISOString().slice(0, 10)}.csv`;
+	link.download = [
+		'form-responses',
+		filenameSuffix,
+		new Date().toISOString().slice(0, 10),
+	]
+		.filter(Boolean)
+		.join('-')
+		.concat('.csv');
 	document.body.appendChild(link);
 	link.click();
 	document.body.removeChild(link);

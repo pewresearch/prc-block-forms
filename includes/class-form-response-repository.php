@@ -174,6 +174,7 @@ class Form_Response_Repository {
 	 *     @type int         $is_spam         Folder: 0 for inbox (default), 1 for spam.
 	 *     @type int|null    $is_unread       Optional: 1 unread only, 0 read only, null = no filter.
 	 *     @type int         $source_post_id  Optional source post filter.
+	 *     @type string      $source_url      Optional exact source URL filter.
 	 *     @type string      $before          Optional ISO8601 upper bound on created_at (exclusive).
 	 *     @type string      $after           Optional ISO8601 lower bound on created_at (exclusive).
 	 *     @type int         $page            Page number.
@@ -195,6 +196,7 @@ class Form_Response_Repository {
 				'is_spam'        => 0,
 				'is_unread'      => null,
 				'source_post_id' => 0,
+				'source_url'     => '',
 				'before'         => '',
 				'after'          => '',
 				'page'           => 1,
@@ -225,6 +227,11 @@ class Form_Response_Repository {
 		if ( ! empty( $args['source_post_id'] ) ) {
 			$where[]  = 'source_post_id = %d';
 			$values[] = absint( $args['source_post_id'] );
+		}
+
+		if ( ! empty( $args['source_url'] ) ) {
+			$where[]  = 'source_url = %s';
+			$values[] = $args['source_url'];
 		}
 
 		if ( ! empty( $args['status'] ) ) {
@@ -647,9 +654,20 @@ class Form_Response_Repository {
 	}
 
 	/**
-	 * Gets distinct statuses and legacy (inline, non-CPT) form names for filter dropdowns.
+	 * Most sources listed per kind in the Source filter.
 	 *
-	 * @return array{statuses: string[], legacy_form_names: string[]}
+	 * @var int
+	 */
+	const SOURCE_FILTER_LIMIT = 200;
+
+	/**
+	 * Gets distinct statuses, legacy (inline, non-CPT) form names, and the most
+	 * used sources for filter dropdowns.
+	 *
+	 * Sources come in two kinds: posts (`source_post_id`) and URLs that did not
+	 * resolve to a post. Both are ordered by response count.
+	 *
+	 * @return array{statuses: string[], legacy_form_names: string[], source_post_ids: int[], source_urls: string[]}
 	 */
 	public function get_filter_options() {
 		global $wpdb;
@@ -658,6 +676,8 @@ class Form_Response_Repository {
 			return array(
 				'statuses'          => array(),
 				'legacy_form_names' => array(),
+				'source_post_ids'   => array(),
+				'source_urls'       => array(),
 			);
 		}
 
@@ -667,9 +687,25 @@ class Form_Response_Repository {
 
 		$legacy_form_names = $wpdb->get_col( "SELECT DISTINCT form_name FROM {$table_name} WHERE (form_id IS NULL OR form_id = 0) AND form_name IS NOT NULL AND form_name != '' ORDER BY form_name ASC" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
+		$source_post_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT source_post_id FROM {$table_name} WHERE source_post_id > 0 GROUP BY source_post_id ORDER BY COUNT(*) DESC, source_post_id DESC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				self::SOURCE_FILTER_LIMIT
+			)
+		);
+
+		$source_urls = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT source_url FROM {$table_name} WHERE (source_post_id IS NULL OR source_post_id = 0) AND source_url IS NOT NULL AND source_url != '' GROUP BY source_url ORDER BY COUNT(*) DESC, source_url ASC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				self::SOURCE_FILTER_LIMIT
+			)
+		);
+
 		return array(
 			'statuses'          => ( $statuses ? $statuses : array() ),
 			'legacy_form_names' => ( $legacy_form_names ? $legacy_form_names : array() ),
+			'source_post_ids'   => array_map( 'intval', ( $source_post_ids ? $source_post_ids : array() ) ),
+			'source_urls'       => ( $source_urls ? $source_urls : array() ),
 		);
 	}
 

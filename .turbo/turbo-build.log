@@ -1,5 +1,5 @@
 
-> @prc/block-forms@1.3.0 build
+> @prc/block-forms@1.3.1 build
 > wp-scripts build --webpack-copy-php && wp-scripts build --experimental-modules --webpack-copy-php && wp-scripts build-blocks-manifest && wp-scripts build --config webpack.responses-admin.config.js && wp-scripts build --config webpack.form-responses-panel.config.js && wp-scripts build --source-path=src/admin-dataview/ --output-path=build/admin-dataview/
 
 Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
@@ -35,7 +35,7 @@ built modules 7.43 KiB (css/mini-extract) 73.7 KiB (javascript) [1m[33m[built]
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.65 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 11007 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 3656 ms
 Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
@@ -69,7 +69,7 @@ built modules 7.43 KiB (css/mini-extract) 73.7 KiB (javascript) [1m[33m[built]
     [1m./src/form-message/index.js + 12 modules[39m[22m 5.65 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m./src/form-message-bindings/index.js + 4 modules[39m[22m 1.89 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     + 3 modules
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 10835 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 5465 ms
 
 assets by path [1m[32mform/view/[39m[22m 15.3 KiB
   asset [1m[32mform/view/index.js[39m[22m 15.2 KiB [1m[32m[emitted][39m[22m [javascript module] [1m[32m[minimized][39m[22m (name: form/view/index)
@@ -83,13 +83,13 @@ orphan modules 24.7 KiB [1m[33m[orphan][39m[22m 7 modules
 built modules 49.8 KiB [1m[33m[built][39m[22m
   [1m./src/form/view/index.js + 7 modules[39m[22m 43.5 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1m./src/form-captcha/view.js + 1 modules[39m[22m 6.26 KiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 8265 ms
+webpack 5.106.2 compiled [1m[32msuccessfully[39m[22m in 4339 ms
 Block metadata PHP file generated at: build/blocks-manifest.php
 Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-assets by chunk 754 KiB (name: index)
-  asset [1m[33mindex.js[39m[22m [1m[33m754 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
+assets by chunk 757 KiB (name: index)
+  asset [1m[33mindex.js[39m[22m [1m[33m757 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
   asset [1m[32mindex.asset.php[39m[22m 331 bytes [1m[32m[emitted][39m[22m (name: index)
 assets by path [1m[32m./*.css[39m[22m 180 KiB
   asset [1m[32m./style-index-rtl.css[39m[22m 89.9 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
@@ -101,10 +101,10 @@ asset [1m[32mform-page/block.json[39m[22m 1.34 KiB [1m[32m[emitted][39m[
 asset [1m[32msynced-form/block.json[39m[22m 748 bytes [1m[32m[emitted][39m[22m [from: src/synced-form/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-captcha/block.json[39m[22m 731 bytes [1m[32m[emitted][39m[22m [from: src/form-captcha/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-message-bindings/block.json[39m[22m 254 bytes [1m[32m[emitted][39m[22m [from: src/form-message-bindings/block.json] [1m[32m[copied][39m[22m
-Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 934 KiB = [1m[32m./style-index.css[39m[22m 89.9 KiB [1m[32m./style-index-rtl.css[39m[22m 89.9 KiB [1m[32mindex.js[39m[22m 754 KiB [1m[32mindex.asset.php[39m[22m 331 bytes
-orphan modules 6.68 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 3362 modules
+Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 937 KiB = [1m[32m./style-index.css[39m[22m 89.9 KiB [1m[32m./style-index-rtl.css[39m[22m 89.9 KiB [1m[32mindex.js[39m[22m 757 KiB [1m[32mindex.asset.php[39m[22m 331 bytes
+orphan modules 6.69 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 3364 modules
 runtime modules 4.48 KiB 7 modules
-built modules 2.08 MiB (javascript) 89.9 KiB (css/mini-extract) [1m[33m[built][39m[22m
+built modules 2.09 MiB (javascript) 89.9 KiB (css/mini-extract) [1m[33m[built][39m[22m
   cacheable modules 13 KiB (javascript) 89.9 KiB (css/mini-extract)
     modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 5.03 KiB
       modules by path [1m../../node_modules/use-sync-external-store/shim/*.js[39m[22m 496 bytes 2 modules
@@ -114,17 +114,17 @@ built modules 2.08 MiB (javascript) 89.9 KiB (css/mini-extract) [1m[33m[built]
     css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 89.9 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/fast-deep-equal/es6/index.js[39m[22m 1.89 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  [1m./src/response-admin/index.js + 695 modules[39m[22m 2.07 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/response-admin/index.js + 697 modules[39m[22m 2.08 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
 
 [1m[33mWARNING[39m[22m in [1masset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
 This can impact web performance.
 Assets: 
-  index.js (754 KiB)[39m[22m
+  index.js (757 KiB)[39m[22m
 
 [1m[33mWARNING[39m[22m in [1mentrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
 Entrypoints:
-  index (934 KiB)
+  index (937 KiB)
       ./style-index.css
       ./style-index-rtl.css
       index.js
@@ -135,12 +135,12 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 36113 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 13530 ms
 Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-assets by chunk 755 KiB (name: index)
-  asset [1m[33mindex.js[39m[22m [1m[33m754 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
+assets by chunk 758 KiB (name: index)
+  asset [1m[33mindex.js[39m[22m [1m[33m757 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
   asset [1m[32mindex.asset.php[39m[22m 358 bytes [1m[32m[emitted][39m[22m (name: index)
 assets by path [1m[32m./*.css[39m[22m 180 KiB
   asset [1m[32m./style-index-rtl.css[39m[22m 89.9 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
@@ -152,10 +152,10 @@ asset [1m[32mform-page/block.json[39m[22m 1.34 KiB [1m[32m[emitted][39m[
 asset [1m[32msynced-form/block.json[39m[22m 748 bytes [1m[32m[emitted][39m[22m [from: src/synced-form/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-captcha/block.json[39m[22m 731 bytes [1m[32m[emitted][39m[22m [from: src/form-captcha/block.json] [1m[32m[copied][39m[22m
 asset [1m[32mform-message-bindings/block.json[39m[22m 254 bytes [1m[32m[emitted][39m[22m [from: src/form-message-bindings/block.json] [1m[32m[copied][39m[22m
-Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 935 KiB = [1m[32m./style-index.css[39m[22m 89.9 KiB [1m[32m./style-index-rtl.css[39m[22m 89.9 KiB [1m[32mindex.js[39m[22m 754 KiB [1m[32mindex.asset.php[39m[22m 358 bytes
-orphan modules 6.68 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 3364 modules
+Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 937 KiB = [1m[32m./style-index.css[39m[22m 89.9 KiB [1m[32m./style-index-rtl.css[39m[22m 89.9 KiB [1m[32mindex.js[39m[22m 757 KiB [1m[32mindex.asset.php[39m[22m 358 bytes
+orphan modules 6.69 MiB (javascript) 937 bytes (runtime) [1m[33m[orphan][39m[22m 3366 modules
 runtime modules 4.48 KiB 7 modules
-built modules 2.08 MiB (javascript) 89.9 KiB (css/mini-extract) [1m[33m[built][39m[22m
+built modules 2.09 MiB (javascript) 89.9 KiB (css/mini-extract) [1m[33m[built][39m[22m
   cacheable modules 13 KiB (javascript) 89.9 KiB (css/mini-extract)
     modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 5.03 KiB
       modules by path [1m../../node_modules/use-sync-external-store/shim/*.js[39m[22m 496 bytes 2 modules
@@ -165,17 +165,17 @@ built modules 2.08 MiB (javascript) 89.9 KiB (css/mini-extract) [1m[33m[built]
     css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/response-admin/style.scss[39m[22m 89.9 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1m../../node_modules/fast-deep-equal/es6/index.js[39m[22m 1.89 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-  [1m./src/form-responses-panel/index.jsx + 697 modules[39m[22m 2.07 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+  [1m./src/form-responses-panel/index.jsx + 699 modules[39m[22m 2.08 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
 
 [1m[33mWARNING[39m[22m in [1masset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
 This can impact web performance.
 Assets: 
-  index.js (754 KiB)[39m[22m
+  index.js (757 KiB)[39m[22m
 
 [1m[33mWARNING[39m[22m in [1mentrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
 Entrypoints:
-  index (935 KiB)
+  index (937 KiB)
       ./style-index.css
       ./style-index-rtl.css
       index.js
@@ -186,28 +186,28 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 24757 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 13722 ms
 Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
-assets by chunk 758 KiB (name: index)
-  asset [1m[33mindex.js[39m[22m [1m[33m758 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
+assets by chunk 761 KiB (name: index)
+  asset [1m[33mindex.js[39m[22m [1m[33m761 KiB[39m[22m [1m[32m[emitted][39m[22m [1m[32m[minimized][39m[22m [1m[33m[big][39m[22m (name: index)
   asset [1m[32mindex.asset.php[39m[22m 343 bytes [1m[32m[emitted][39m[22m (name: index)
 assets by path [1m[32m./*.css[39m[22m 180 KiB
   asset [1m[32m./style-index-rtl.css[39m[22m 90.2 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
   asset [1m[32m./style-index.css[39m[22m 90.1 KiB [1m[32m[emitted][39m[22m (name: ./style-index) (id hint: style)
-Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 939 KiB = [1m[32m./style-index.css[39m[22m 90.1 KiB [1m[32m./style-index-rtl.css[39m[22m 90.2 KiB [1m[32mindex.js[39m[22m 758 KiB [1m[32mindex.asset.php[39m[22m 343 bytes
-orphan modules 6.69 MiB (javascript) 1.83 KiB (runtime) [1m[33m[orphan][39m[22m 3372 modules
+Entrypoint [1mindex[39m[22m [1m[33m[big][39m[22m 942 KiB = [1m[32m./style-index.css[39m[22m 90.1 KiB [1m[32m./style-index-rtl.css[39m[22m 90.2 KiB [1m[32mindex.js[39m[22m 761 KiB [1m[32mindex.asset.php[39m[22m 343 bytes
+orphan modules 6.7 MiB (javascript) 1.83 KiB (runtime) [1m[33m[orphan][39m[22m 3374 modules
 runtime modules 4.48 KiB 7 modules
-built modules 2.09 MiB (javascript) 90.1 KiB (css/mini-extract) [1m[33m[built][39m[22m
-  javascript modules 2.09 MiB
+built modules 2.1 MiB (javascript) 90.1 KiB (css/mini-extract) [1m[33m[built][39m[22m
+  javascript modules 2.1 MiB
     cacheable modules 13 KiB
       modules by path [1m../../node_modules/use-sync-external-store/[39m[22m 5.03 KiB
         modules by path [1m../../node_modules/use-sync-external-store/shim/*.js[39m[22m 496 bytes 2 modules
         modules by path [1m../../node_modules/use-sync-external-store/cjs/[39m[22m 4.54 KiB 2 modules
       [1m../../node_modules/remove-accents/index.js[39m[22m 6.07 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
       [1m../../node_modules/fast-deep-equal/es6/index.js[39m[22m 1.89 KiB [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
-    [1m./src/admin-dataview/index.jsx + 699 modules[39m[22m 2.08 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
+    [1m./src/admin-dataview/index.jsx + 701 modules[39m[22m 2.09 MiB [1m[31m[not cacheable][39m[22m [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
     [1mexternal "React"[39m[22m 42 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
   css modules 90.1 KiB
     css ../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!../../node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]![1m./src/admin-dataview/style.scss[39m[22m 272 bytes [1m[33m[built][39m[22m [1m[33m[code generated][39m[22m
@@ -216,11 +216,11 @@ built modules 2.09 MiB (javascript) 90.1 KiB (css/mini-extract) [1m[33m[built]
 [1m[33mWARNING[39m[22m in [1masset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
 This can impact web performance.
 Assets: 
-  index.js (758 KiB)[39m[22m
+  index.js (761 KiB)[39m[22m
 
 [1m[33mWARNING[39m[22m in [1mentrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
 Entrypoints:
-  index (939 KiB)
+  index (942 KiB)
       ./style-index.css
       ./style-index-rtl.css
       index.js
@@ -231,4 +231,4 @@ Entrypoints:
 You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
 For more info visit https://webpack.js.org/guides/code-splitting/[39m[22m
 
-webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 22601 ms
+webpack 5.106.2 compiled with [1m[33m3 warnings[39m[22m in 12560 ms

@@ -11,13 +11,14 @@ import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
  *
  * The "form" filter value is prefixed: `id:<post id>` targets the form CPT
  * (`form_id` column), `name:<form name>` targets legacy inline forms
- * (`form_name` column).
+ * (`form_name` column). The "source" filter value works the same way:
+ * `post:<id>` targets `source_post_id`, `url:<url>` targets `source_url`.
  *
  * @param {Object}  view   The DataViews view object.
  * @param {boolean} isSpam Whether the spam folder is active.
  * @return {Object} Query args.
  */
-function viewToQueryArgs(view, isSpam) {
+export function viewToQueryArgs(view, isSpam) {
 	const args = {
 		per_page: view.perPage || 25,
 		page: view.page || 1,
@@ -41,6 +42,15 @@ function viewToQueryArgs(view, isSpam) {
 				}
 				if (value.startsWith('name:')) {
 					args.form_name = value.slice(5);
+				}
+			}
+			if (filter.field === 'source') {
+				const value = String(filter.value);
+				if (value.startsWith('post:')) {
+					args.source_post_id = parseInt(value.slice(5), 10);
+				}
+				if (value.startsWith('url:')) {
+					args.source_url = value.slice(4);
 				}
 			}
 			if (filter.field === 'status') {

@@ -17,7 +17,8 @@ import { __, sprintf } from '@wordpress/i18n';
  */
 import fields from './fields';
 import getActions from './actions';
-import useResponses from './hooks/use-responses';
+import ExportAllButton from './export-all-button';
+import useResponses, { viewToQueryArgs } from './hooks/use-responses';
 
 const DEFAULT_LAYOUTS = {
 	table: {
@@ -93,6 +94,18 @@ export default function ResponsesApp({ formId = 0 }) {
 
 	const actions = useMemo(() => getActions(refresh), [refresh]);
 
+	const exportQueryArgs = useMemo(() => {
+		const args = viewToQueryArgs(view, 'spam' === folder);
+		if (formId) {
+			args.form_id = formId;
+		}
+		return args;
+	}, [view, folder, formId]);
+
+	const exportFilenameSuffix = [formId ? `form-${formId}` : '', folder]
+		.filter(Boolean)
+		.join('-');
+
 	const handleChangeView = useCallback((newView) => {
 		setView(newView);
 	}, []);
@@ -167,6 +180,13 @@ export default function ResponsesApp({ formId = 0 }) {
 					search
 					searchLabel={__('Search responses…', 'prc-block-forms')}
 					getItemId={(item) => item.id.toString()}
+					header={
+						<ExportAllButton
+							queryArgs={exportQueryArgs}
+							totalItems={paginationInfo.totalItems}
+							filenameSuffix={exportFilenameSuffix}
+						/>
+					}
 				/>
 			)}
 			<Snackbars />
